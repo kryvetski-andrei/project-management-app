@@ -1,7 +1,7 @@
-import style from './App.module.scss';
+import AppRouter from './components/AppRoute';
 
 function App() {
-  return <h1 className={style['App-title']}>Project management app</h1>;
+  return <AppRouter />;
 }
 
 export default App;
