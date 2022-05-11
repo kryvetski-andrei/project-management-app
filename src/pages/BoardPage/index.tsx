@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classes from './index.module.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTypedSelector } from '../../hooks/useTypeSelector';
 
 type Item = { id: number; title: string };
 
@@ -20,6 +22,9 @@ const isTask = (item: TaskList): item is TaskList => {
 };
 
 const BoardPage = () => {
+  const dispatch = useDispatch();
+  const reduxBoards = useTypedSelector((state) => state);
+
   const [boards, setBoards] = useState([
     {
       id: 1,
@@ -78,14 +83,31 @@ const BoardPage = () => {
     setTimeout(() => {
       const currentIndex = board!.items.indexOf(item);
       board!.items.splice(currentIndex, 1);
-      setBoards(
-        boards.map((b) => {
-          if (b.id === board!.id) {
-            return board!;
-          }
-          return b;
-        })
-      );
+      setBoards(boards.map((b) => (b.id === board!.id ? board! : b)));
+    });
+  };
+
+  const reduxTakeTask = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
+    const target = e.target as HTMLElement;
+    setCurrentBoard(board);
+    setCurrentItem(item);
+    setCurrentTaskSize(target.offsetHeight);
+
+    console.log('redux task henler works');
+    setTimeout(() => {
+      const currentBoardd = JSON.parse(JSON.stringify(board));
+      const currentIndex = board.items.indexOf(item);
+      console.log(currentBoardd, 'current board');
+      console.log(item, 'current item');
+      console.log(currentIndex, 'current index');
+      currentBoardd.items.splice(currentIndex, 1);
+      const boba = [...reduxBoards.boards].map((b) => (b.id === board!.id ? currentBoardd! : b));
+      // setBoards(boards.map((b) => (b.id === board!.id ? board! : b)));
+      console.log(boba, 'boba');
+      dispatch({
+        type: 'REMOVE_TASK_FROM_BOARD',
+        update: boba,
+      });
     });
   };
 
@@ -93,12 +115,19 @@ const BoardPage = () => {
     e.preventDefault();
     const dropZoneId = item.id;
     board.items.splice(dropZoneId, 0, currentItem!);
-    setBoards(
-      boards.map((b) => {
-        if (b.id === board.id) return board;
-        return b;
-      })
-    );
+    setBoards(boards.map((b) => (b.id === board.id ? board : b)));
+  };
+
+  const reduxDropHandler = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
+    e.preventDefault();
+    const dropZoneId = item.id;
+    const currentBoard = JSON.parse(JSON.stringify(board));
+    currentBoard.items.splice(dropZoneId, 0, currentItem!);
+    const boba = [...reduxBoards.boards].map((b) => (b.id === board.id ? currentBoard : b));
+    dispatch({
+      type: 'ADD_TASK_TO_BOARD',
+      update: boba,
+    });
   };
 
   const changeDropZoneSize = (e: React.DragEvent<HTMLDivElement>) => {
@@ -117,7 +146,7 @@ const BoardPage = () => {
 
   return (
     <div className={classes.app}>
-      {boards.map((board) => (
+      {reduxBoards.boards.map((board) => (
         <div className={classes.board} key={board.id}>
           <div className={classes.board__title}>
             {board.title}
@@ -126,7 +155,7 @@ const BoardPage = () => {
                 <div key={item.id}>
                   <div
                     className={classes.item}
-                    onDragStart={(e) => takeTask(e, board, item as Item)}
+                    onDragStart={(e) => reduxTakeTask(e, board, item as Item)}
                     draggable={true}
                   >
                     {(item as Item).title}
@@ -137,7 +166,7 @@ const BoardPage = () => {
                   key={index + Date.now()}
                   onDragOver={(e) => changeDropZoneSize(e)}
                   onDragLeave={(e) => resetDropZoneSize(e)}
-                  onDrop={(e) => dropHandler(e, board, item)}
+                  onDrop={(e) => reduxDropHandler(e, board, item)}
                   className={classes.dropZone}
                 ></div>
               )
