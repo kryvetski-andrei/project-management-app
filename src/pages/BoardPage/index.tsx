@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import classes from './index.module.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
 
-type Item = { id: number; title: string };
-
-type Board = {
+interface ITask {
   id: number;
   title: string;
-  items: Item[];
-};
+}
+
+interface IColum {
+  id: number;
+  title: string;
+  tasks: ITask[];
+}
 
 type DropZone = {
   id: number;
 };
 
-type TaskList = Item | DropZone;
+type TaskList = ITask | DropZone;
 
 const isTask = (item: TaskList): item is TaskList => {
   return 'title' in item;
@@ -25,41 +28,10 @@ const BoardPage = () => {
   const dispatch = useDispatch();
   const reduxBoards = useTypedSelector((state) => state);
 
-  const [boards, setBoards] = useState([
-    {
-      id: 1,
-      title: 'Сделать',
-      items: [
-        { id: 1, title: 'Пойти в магаз' },
-        { id: 2, title: 'сыграть в доту' },
-        { id: 3, title: 'Победить' },
-      ],
-    },
-    {
-      id: 2,
-      title: 'Проверить',
-      items: [
-        { id: 4, title: 'холодильник' },
-        { id: 5, title: 'мусор' },
-        { id: 6, title: 'коммнуалку' },
-      ],
-    },
-    {
-      id: 3,
-      title: 'Сделано',
-      items: [
-        { id: 7, title: 'поспать' },
-        { id: 8, title: 'поесть' },
-        { id: 9, title: 'Покурить' },
-      ],
-    },
-  ]);
-
-  const [currentBoard, setCurrentBoard] = useState<Board | null>(null);
-  const [currentItem, setCurrentItem] = useState<Item | null>(null);
+  const [currentTask, setCurrentTask] = useState<ITask | null>(null);
   const [currentTaskSize, setCurrentTaskSize] = useState<number | null>(null);
 
-  const fillTasksWithDropZones = (tasks: Item[]) => {
+  const fillTasksWithDropZones = (tasks: ITask[]) => {
     const dropZone = {
       id: 0,
     };
@@ -74,59 +46,33 @@ const BoardPage = () => {
     );
   };
 
-  const takeTask = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
+  const reduxTakeTask = (e: React.DragEvent<HTMLDivElement>, column: IColum, task: ITask) => {
     const target = e.target as HTMLElement;
-    setCurrentBoard(board);
-    setCurrentItem(item);
+    setCurrentTask(task);
     setCurrentTaskSize(target.offsetHeight);
 
     setTimeout(() => {
-      const currentIndex = board!.items.indexOf(item);
-      board!.items.splice(currentIndex, 1);
-      setBoards(boards.map((b) => (b.id === board!.id ? board! : b)));
-    });
-  };
+      const currentColumn = JSON.parse(JSON.stringify(column));
+      const currentIndex = column.tasks.indexOf(task);
+      currentColumn.tasks.splice(currentIndex, 1);
+      const boba = [...reduxBoards.columns].map((b) => (b.id === column!.id ? currentColumn! : b));
 
-  const reduxTakeTask = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
-    const target = e.target as HTMLElement;
-    setCurrentBoard(board);
-    setCurrentItem(item);
-    setCurrentTaskSize(target.offsetHeight);
-
-    console.log('redux task henler works');
-    setTimeout(() => {
-      const currentBoardd = JSON.parse(JSON.stringify(board));
-      const currentIndex = board.items.indexOf(item);
-      console.log(currentBoardd, 'current board');
-      console.log(item, 'current item');
-      console.log(currentIndex, 'current index');
-      currentBoardd.items.splice(currentIndex, 1);
-      const boba = [...reduxBoards.boards].map((b) => (b.id === board!.id ? currentBoardd! : b));
-      // setBoards(boards.map((b) => (b.id === board!.id ? board! : b)));
-      console.log(boba, 'boba');
       dispatch({
         type: 'REMOVE_TASK_FROM_BOARD',
-        update: boba,
+        payload: boba,
       });
     });
   };
 
-  const dropHandler = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
+  const reduxDropHandler = (e: React.DragEvent<HTMLDivElement>, column: IColum, task: ITask) => {
     e.preventDefault();
-    const dropZoneId = item.id;
-    board.items.splice(dropZoneId, 0, currentItem!);
-    setBoards(boards.map((b) => (b.id === board.id ? board : b)));
-  };
-
-  const reduxDropHandler = (e: React.DragEvent<HTMLDivElement>, board: Board, item: Item) => {
-    e.preventDefault();
-    const dropZoneId = item.id;
-    const currentBoard = JSON.parse(JSON.stringify(board));
-    currentBoard.items.splice(dropZoneId, 0, currentItem!);
-    const boba = [...reduxBoards.boards].map((b) => (b.id === board.id ? currentBoard : b));
+    const dropZoneId = task.id;
+    const currentBoard = JSON.parse(JSON.stringify(column));
+    currentBoard.tasks.splice(dropZoneId, 0, currentTask!);
+    const boba = [...reduxBoards.columns].map((b) => (b.id === column.id ? currentBoard : b));
     dispatch({
       type: 'ADD_TASK_TO_BOARD',
-      update: boba,
+      payload: boba,
     });
   };
 
@@ -146,19 +92,19 @@ const BoardPage = () => {
 
   return (
     <div className={classes.app}>
-      {reduxBoards.boards.map((board) => (
-        <div className={classes.board} key={board.id}>
+      {reduxBoards.columns.map((column) => (
+        <div className={classes.board} key={column.id}>
           <div className={classes.board__title}>
-            {board.title}
-            {fillTasksWithDropZones(board.items).map((item: DropZone | Item, index) =>
-              isTask(item) ? (
-                <div key={item.id}>
+            {column.title}
+            {fillTasksWithDropZones(column.tasks).map((task: DropZone | ITask, index) =>
+              isTask(task) ? (
+                <div key={task.id}>
                   <div
-                    className={classes.item}
-                    onDragStart={(e) => reduxTakeTask(e, board, item as Item)}
+                    className={classes.task}
+                    onDragStart={(e) => reduxTakeTask(e, column, task as ITask)}
                     draggable={true}
                   >
-                    {(item as Item).title}
+                    {(task as ITask).title}
                   </div>
                 </div>
               ) : (
@@ -166,7 +112,7 @@ const BoardPage = () => {
                   key={index + Date.now()}
                   onDragOver={(e) => changeDropZoneSize(e)}
                   onDragLeave={(e) => resetDropZoneSize(e)}
-                  onDrop={(e) => reduxDropHandler(e, board, item)}
+                  onDrop={(e) => reduxDropHandler(e, column, task)}
                   className={classes.dropZone}
                 ></div>
               )

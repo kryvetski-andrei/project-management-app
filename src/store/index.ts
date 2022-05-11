@@ -1,11 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 const defaultState = {
-  boards: [
+  columns: [
     {
       id: 1,
       title: 'Сделать',
-      items: [
+      tasks: [
         { id: 1, title: 'Пойти в магаз' },
         { id: 2, title: 'сыграть в доту' },
         { id: 3, title: 'Победить' },
@@ -14,7 +14,7 @@ const defaultState = {
     {
       id: 2,
       title: 'Проверить',
-      items: [
+      tasks: [
         { id: 4, title: 'холодильник' },
         { id: 5, title: 'мусор' },
         { id: 6, title: 'коммнуалку' },
@@ -23,7 +23,7 @@ const defaultState = {
     {
       id: 3,
       title: 'Сделано',
-      items: [
+      tasks: [
         { id: 7, title: 'поспать' },
         { id: 8, title: 'поесть' },
         { id: 9, title: 'Покурить' },
@@ -32,18 +32,21 @@ const defaultState = {
   ],
 };
 
-type Item = { id: number; title: string };
+interface ITask {
+  id: number;
+  title: string;
+}
 
 interface IBoardState {
   id: number;
   title: string;
-  items: Item[];
+  tasks: ITask[];
 }
 
 type Board = {
   id: number;
   title: string;
-  items: Item[];
+  tasks: ITask[];
 };
 
 type DropZone = {
@@ -52,15 +55,15 @@ type DropZone = {
 
 interface IAction {
   type: string;
-  update?: Board[];
+  payload?: Board[];
 }
 
 const reducer = (state = defaultState, action: IAction) => {
   switch (action.type) {
     case 'ADD_TASK_TO_BOARD':
-      return { ...state, boards: [...(action.update ?? [])] };
+      return { ...state, columns: [...(action.payload ?? [])] };
     case 'REMOVE_TASK_FROM_BOARD':
-      return { ...state, boards: [...(action.update ?? [])] };
+      return { ...state, columns: [...(action.payload ?? [])] };
     default:
       return state;
   }
