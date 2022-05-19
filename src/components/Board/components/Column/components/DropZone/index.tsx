@@ -33,7 +33,7 @@ import React from 'react';
 //           onDragOver={(e) => changeDropZoneSize(e)}
 //           onDragLeave={(e) => resetDropZoneSize(e)}
 //           onDrop={(e) => dropHandler(e, board, item)}
-//           className={classes.dropZone}
+//           className={classes.DropZone}
 //       ></div>
 //   )
 // }
