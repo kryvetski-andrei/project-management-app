@@ -1,5 +1,5 @@
 import type { CSSProperties, FC } from 'react';
-import { memo, useState } from 'react';
+import { memo, useState, useRef, useCallback } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 
 const ItemTypes = {
@@ -10,7 +10,6 @@ const ItemTypes = {
 const style: CSSProperties = {
   border: '1px dashed gray',
   padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
 };
@@ -29,72 +28,93 @@ export interface TaskProps {
     currentTask: { columnId: string; taskId: string },
     underTask: { columnId: string; taskId: string }
   ) => void;
+  setTaskHeight: (taskHeight: number) => void;
 }
 
 interface Item {
   columnId: string;
   id: string;
-  originalIndex: number;
+  height: number;
 }
 
-export const Task: FC<TaskProps> = memo(function Task({ columnId, id, title, moveTask }) {
+export const Task: FC<TaskProps> = memo(function Task({
+  columnId,
+  id,
+  title,
+  moveTask,
+  setTaskHeight,
+}) {
   const [opacity, setOpacity] = useState(1);
+  const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(null);
 
-  const [{ isDragging }, drag] = useDrag(
+  const measuredRef = useCallback(
+    (node) => {
+      if (node !== null) {
+        setHeight(node.getBoundingClientRect().height);
+        return drag(node);
+      }
+    },
+    [height]
+  );
+
+  const [, drag] = useDrag(
     () => ({
       type: ItemTypes.TASK,
-      item: { columnId, id },
+      item: { columnId, id, height },
+
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
+        size: monitor.getItem(),
       }),
       end: (item, monitor) => {
         const { id: droppedId } = item;
         const didDrop = monitor.didDrop();
         setOpacity(1);
         if (!didDrop) {
-          console.log(droppedId);
+          // console.log(monitor.getItem(), 'item');
           // moveTask(droppedId, originalIndex, originalColumnIndex, columnId)
         }
       },
     }),
-    [id]
+    [height]
   );
 
-  const [, drop] = useDrop(
-    () => ({
-      accept: ItemTypes.TASK,
-      hover({ id: currentTaskId, columnId: currentColumnId }: Item) {
-        const underTask = {
-          columnId: columnId,
-          taskId: id,
-        };
-
-        const currentTask = {
-          columnId: currentColumnId,
-          taskId: currentTaskId,
-        };
-
-        // console.log('Dragged Task Id: ', draggedTaskId);
-        // console.log('Parent Column Id: ', parentColumnId);
-        // console.log('Task Id BELOW: ', id);
-        // console.log('Column Id BELOW: ', columnId);
-        if (currentTask.taskId !== id) {
-          moveTask(currentTask, underTask);
-
-          // console.log(columnIndexBelow, taskIndexBelow, taskBelow, parentColumnIndex, draggedTaskIndex, draggedTask)
-          // const { index } = findColumn(columnId);
-        } else {
-          setOpacity(0);
-        }
-      },
-    }),
-    []
-  );
-
+  // const [, drop] = useDrop(
+  //   () => ({
+  //     accept: ItemTypes.TASK,
+  //     hover({ id: currentTaskId, columnId: currentColumnId }: Item) {
+  //       const underTask = {
+  //         columnId: columnId,
+  //         taskId: id,
+  //       };
+  //
+  //       const currentTask = {
+  //         columnId: currentColumnId,
+  //         taskId: currentTaskId,
+  //       };
+  //
+  //       // console.log('Dragged Task Id: ', draggedTaskId);
+  //       // console.log('Parent Column Id: ', parentColumnId);
+  //       // console.log('Task Id BELOW: ', id);
+  //       // console.log('Column Id BELOW: ', columnId);
+  //       if (currentTask.taskId !== id) {
+  //         moveTask(currentTask, underTask);
+  //
+  //         // console.log(columnIndexBelow, taskIndexBelow, taskBelow, parentColumnIndex, draggedTaskIndex, draggedTask)
+  //         // const { index } = findColumn(columnId);
+  //       } else {
+  //         setOpacity(0);
+  //       }
+  //     },
+  //   }),
+  //   []
+  // );
+  // console.log(height);
   // const opacity = isDragging ? 1 : 1
   return (
-    <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
-      {title}
+    <div ref={(node) => drag(node)} style={{ ...style, opacity }}>
+      <div ref={measuredRef}>{title}</div>
     </div>
   );
 });

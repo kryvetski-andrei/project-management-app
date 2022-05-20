@@ -2,6 +2,7 @@ import type { CSSProperties, FC } from 'react';
 import { memo, useCallback, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Task } from './components/Task';
+import DropZone from './components/DropZone';
 
 const ItemTypes = {
   COLUMN: 'column',
@@ -10,10 +11,32 @@ const ItemTypes = {
 
 const style: CSSProperties = {
   border: '1px dashed gray',
+  width: 400,
   padding: '0.5rem 1rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
+};
+
+interface ITask {
+  id: number;
+  title: string;
+}
+
+interface IColum {
+  id: number;
+  title: string;
+  tasks: ITask[];
+}
+
+type DropZone = {
+  id: number;
+};
+
+type TaskList = ITask | DropZone;
+
+const isTask = (item: TaskList): item is ITask => {
+  return 'title' in item;
 };
 
 export interface ColumnProps {
@@ -46,6 +69,8 @@ export const Column: FC<ColumnProps> = memo(function Column({
   moveTask,
   findTask,
 }) {
+  const [taskHeight, setTaskHeight] = useState(0);
+
   const originalIndex = findColumn(id).index;
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -78,19 +103,43 @@ export const Column: FC<ColumnProps> = memo(function Column({
     [findColumn, moveColumn]
   );
 
+  const fillTasksWithDropZones = (tasks: Task[]) => {
+    const dropZone = {
+      id: 0,
+    };
+    let id = dropZone.id;
+    return tasks.reduce(
+      (tasksWithDropZones, task) => {
+        tasksWithDropZones.push(task);
+        tasksWithDropZones.push({ id: (id += 1) });
+        return tasksWithDropZones;
+      },
+      [dropZone]
+    );
+  };
+
+  const isTask = (item: TaskList): item is TaskList => {
+    return 'title' in item;
+  };
+
   const opacity = isDragging ? 0 : 1;
   return (
     <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
       {title}
-      {tasks.map((task) => (
-        <Task
-          key={task.id}
-          columnId={`${task.columnId}`}
-          id={`${task.id}`}
-          title={task.title}
-          moveTask={moveTask}
-        />
-      ))}
+      {fillTasksWithDropZones(tasks).map((task: DropZone | ITask, index) =>
+        isTask(task) ? (
+          <Task
+            key={task.id}
+            columnId={`${(task as Task).columnId}`}
+            id={`${task.id}`}
+            title={(task as Task).title}
+            moveTask={moveTask}
+            setTaskHeight={setTaskHeight}
+          />
+        ) : (
+          <DropZone key={index + Date.now()} id={(task as DropZone).id} />
+        )
+      )}
     </div>
   );
 });

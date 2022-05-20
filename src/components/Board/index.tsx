@@ -11,7 +11,7 @@ const ItemTypes = {
 };
 
 const style = {
-  width: 400,
+  display: 'flex',
 };
 
 const ITEMS = [
@@ -22,7 +22,8 @@ const ITEMS = [
       {
         columnId: 1,
         id: 1,
-        title: 'Поесть',
+        title:
+          'Поестьnode.getBo undingClient Rect().heigh node.getBoundingClientRect().heightnode.getBoundingClientRect().heightnode.g etBoundingClie ntRect().height node.getBoundi ngClientR ect().heig htnode.g etBoundin gClientRect().heightnode.getBoundingClientRect().heightn ode.getB oundingCli entRect().he ightnode. getBoundingClientRect().height',
       },
       {
         columnId: 1,
@@ -150,8 +151,6 @@ export const Board = memo(function Board() {
         columnsCopy[underColumnIndex].tasks.splice(underTaskIndex, 0, draggedTask);
       } else {
         if (columnsCopy[currentColumnIndex].tasks.includes(draggedTask)) {
-          console.log(takedTask);
-
           const previousTaskIndex = columnsCopy[currentColumnIndex].tasks.indexOf(draggedTask);
           columnsCopy[currentColumnIndex].tasks.splice(previousTaskIndex, 1);
         } else {
