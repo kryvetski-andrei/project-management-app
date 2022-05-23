@@ -45,14 +45,6 @@ export interface ColumnProps {
   tasks: Task[];
   moveColumn: (id: string, to: number) => void;
   findColumn: (id: string) => { index: number };
-  moveTask: (
-    currentTask: { columnId: string; taskId: string },
-    underTask: { columnId: string; taskId: string }
-  ) => void;
-  findTask: (
-    taskId: string,
-    columnId: string
-  ) => { columnIndex: number; taskIndex: number; task: Task };
 }
 
 interface Item {
@@ -66,11 +58,7 @@ export const Column: FC<ColumnProps> = memo(function Column({
   tasks,
   moveColumn,
   findColumn,
-  moveTask,
-  findTask,
 }) {
-  const [taskHeight, setTaskHeight] = useState(0);
-
   const originalIndex = findColumn(id).index;
   const [{ isDragging }, drag] = useDrag(
     () => ({
@@ -106,12 +94,14 @@ export const Column: FC<ColumnProps> = memo(function Column({
   const fillTasksWithDropZones = (tasks: Task[]) => {
     const dropZone = {
       id: 0,
+      columnId: 0,
     };
     let id = dropZone.id;
     return tasks.reduce(
       (tasksWithDropZones, task) => {
         tasksWithDropZones.push(task);
-        tasksWithDropZones.push({ id: (id += 1) });
+        tasksWithDropZones.push({ id: (id += 1), columnId: task.columnId });
+        tasksWithDropZones[0].columnId = task.columnId;
         return tasksWithDropZones;
       },
       [dropZone]
@@ -133,47 +123,15 @@ export const Column: FC<ColumnProps> = memo(function Column({
             columnId={`${(task as Task).columnId}`}
             id={`${task.id}`}
             title={(task as Task).title}
-            moveTask={moveTask}
-            setTaskHeight={setTaskHeight}
           />
         ) : (
-          <DropZone key={index + Date.now()} id={(task as DropZone).id} />
+          <DropZone
+            key={index + Date.now()}
+            id={(task as DropZone).id}
+            columnId={(task as Task).columnId}
+          />
         )
       )}
     </div>
   );
 });
-
-// import React from 'react';
-//
-// interface ITask {
-//   id: string;
-//   title: string;
-//   order: number;
-//   description: string;
-//   userId: string;
-//   boardId: string;
-//   columnId: string;
-// }
-//
-// interface IColumn {
-//   id: string;
-//   title: string;
-//   order: number;
-// }
-//
-// interface ITasksColumn extends IColumn {
-//   task: ITask;
-// }
-//
-// const Column = (props: ITasksColumn) => {
-//   const { id, title, order, task } = props;
-//
-//   return (
-//     <ul>
-//       <li>{task}</li>
-//     </ul>
-//   );
-// };
-//
-// export default Column;
