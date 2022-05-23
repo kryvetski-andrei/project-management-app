@@ -1,7 +1,13 @@
 import AppRouter from './components/AppRoute';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 function App() {
-  return <AppRouter />;
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <AppRouter />
+    </DndProvider>
+  );
 }
 
 export default App;
