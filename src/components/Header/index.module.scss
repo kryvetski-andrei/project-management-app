@@ -1,0 +1,50 @@
+.header {
+  height: 4em;
+
+  transition: background-color 5s ease-in-out;
+}
+
+.header_top { background-color: white !important; }
+
+.header_scroll { background-color: #171717 !important; }
+
+.header_scroll .header__logo { color: white; }
+
+.header_scroll .header__link {
+  color: white;
+
+  background-color: rgb(68, 68, 68); 
+}
+
+.header__logo {
+  font-family: 'Gochi Hand';
+  font-size: 2.063rem;
+
+  color: #000000;
+
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.header__link {
+  display: block;
+  padding: .759rem .938rem;
+  border-radius: 1rem;
+
+  background-color: rgba(244,244,244,1);
+  
+  color: #000000;
+  font-family: Poppins;
+  font-size: .75rem;
+  text-align: center;
+  text-decoration: none;
+
+  cursor: pointer;
+}
+
+.header__link:hover {
+  transform: scale(1.12);
+  transition: transform .2s;
+}
+
+.header__link:not(:hover){ transition: transform .2s ease-out; }
