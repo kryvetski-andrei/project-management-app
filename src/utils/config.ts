@@ -1,6 +1,8 @@
 export const pagesPath = {
   mainPagePath: '/',
   welcomeUsPagePath: '/welcome',
-  boardPagePath: '/board',
+  loginPagePath: '/login',
+  signupPagePath: '/signup',
+  borderPagePath: '/border',
   errorPagePath: '/error',
 };

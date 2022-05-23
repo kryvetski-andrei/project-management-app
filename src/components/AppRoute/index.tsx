@@ -3,7 +3,6 @@ import { Routes, Route } from 'react-router-dom';
 import { pagesPath } from '../../utils/config';
 import WelcomePage from '../../pages/WelcomePage';
 import MainPage from '../../pages/MainPage';
-import RegistrationPage from '../../pages/RegistrationPage';
 import ErrorPage from '../../pages/ErrorPage';
 import BoardPage from '../../pages/BoardPage';
 
