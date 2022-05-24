@@ -15,3 +15,19 @@ export async function signin(
 
   return resp.json();
 }
+
+export async function signup(
+  name: string,
+  login: string,
+  password: string
+): Promise<{ id: string } | IApiError> {
+  const resp = await fetch(`${SERVER_ADDR}/signup`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, login, password }),
+  });
+
+  return resp.json();
+}

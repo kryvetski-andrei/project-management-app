@@ -23,14 +23,11 @@ function LogInForm(): ReactElement {
 
   async function onSubmit(data: FieldValues): Promise<void> {
     const payload = await signin(data.login, data.password);
-    console.log(payload);
 
     if (objIsIApiError(payload)) {
       setError({ show: true, msg: payload.message.toString() });
       return;
     }
-
-    console.log(payload.token);
   }
 
   return (
