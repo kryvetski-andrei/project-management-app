@@ -1,6 +1,7 @@
 import { Alert, Button, Snackbar, TextField } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { signup } from '../../utils/api/authorization';
 import { objIsIApiError } from '../../utils/types/api';
 import styles from './index.module.scss';
@@ -17,6 +18,8 @@ function SignUpForm(): ReactElement {
     formState: { errors },
   } = useForm({ mode: 'onSubmit' });
 
+  const navigate = useNavigate();
+
   function closeError() {
     setError({ show: false, msg: '' });
   }
@@ -28,6 +31,8 @@ function SignUpForm(): ReactElement {
       setError({ show: true, msg: payload.message.toString() });
       return;
     }
+
+    navigate('/login');
   }
 
   return (

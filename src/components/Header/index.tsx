@@ -1,6 +1,7 @@
 import { AppBar, Box, Container, useScrollTrigger } from '@mui/material';
 import { cloneElement, ReactElement } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { pagesPath } from '../../utils/config';
 import styles from './index.module.scss';
 import Profile from './Profile';
@@ -32,8 +33,7 @@ function ElevationScroll(props: Props) {
 }
 
 function Header(): ReactElement {
-  const location = useLocation();
-  console.log(location);
+  const token = useTypedSelector((state) => state.auth.token);
 
   return (
     <ElevationScroll>
@@ -59,18 +59,21 @@ function Header(): ReactElement {
               alignItems: 'center',
             }}
           >
-            {links.map(({ text, path }) => (
-              <NavLink
-                className={({ isActive }) => {
-                  return [isActive ? 'active' : '', styles['header__link']].join(' ');
-                }}
-                key={text}
-                to={path}
-              >
-                {text}
-              </NavLink>
-            ))}
-            {/* <Profile /> */}
+            {token != null ? (
+              <Profile />
+            ) : (
+              links.map(({ text, path }) => (
+                <NavLink
+                  className={({ isActive }) => {
+                    return [isActive ? 'active' : '', styles['header__link']].join(' ');
+                  }}
+                  key={text}
+                  to={path}
+                >
+                  {text}
+                </NavLink>
+              ))
+            )}
           </Box>
         </Container>
       </AppBar>
