@@ -5,6 +5,7 @@ import MainPage from '../../pages/MainPage';
 import ErrorPage from '../../pages/ErrorPage';
 import BoardPage from '../../pages/BoardPage';
 import SignUpPage from '../../pages/SignUpPage';
+import LogInPage from '../../pages/LogInPage';
 
 const AppRouter = () => {
   return (
@@ -12,6 +13,7 @@ const AppRouter = () => {
       <Route path={pagesPath.welcomeUsPagePath} element={<WelcomePage />} />
       <Route path={pagesPath.mainPagePath} element={<MainPage />} />
       <Route path={pagesPath.borderPagePath} element={<BoardPage />} />
+      <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
       <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
       <Route path="*" element={<ErrorPage />} />
     </Routes>
