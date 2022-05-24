@@ -6,3 +6,5 @@ export const pagesPath = {
   borderPagePath: '/border',
   errorPagePath: '/error',
 };
+
+export const SERVER_ADDR = 'https://kryvetski-be.herokuapp.com';
