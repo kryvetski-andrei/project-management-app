@@ -11,6 +11,7 @@ const AppRouter = () => {
     <Routes>
       <Route path={pagesPath.welcomeUsPagePath} element={<WelcomePage />} />
       <Route path={pagesPath.mainPagePath} element={<MainPage />} />
+      <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
       <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
       <Route path={pagesPath.boardPagePath} element={<BoardPage />} />
       <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
