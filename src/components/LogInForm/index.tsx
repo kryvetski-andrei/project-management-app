@@ -1,8 +1,11 @@
 import { Alert, Button, Link, Snackbar, TextField } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { signin } from '../../utils/api/authorization';
 import { objIsIApiError } from '../../utils/types/api';
+import { AuthActionTypes, TOKEN_STORAGE_NAME } from '../../utils/types/authorization';
 import styles from './index.module.scss';
 
 function LogInForm(): ReactElement {
@@ -17,6 +20,9 @@ function LogInForm(): ReactElement {
     formState: { errors },
   } = useForm({ mode: 'onSubmit' });
 
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+
   function closeError() {
     setError({ show: false, msg: '' });
   }
@@ -28,6 +34,10 @@ function LogInForm(): ReactElement {
       setError({ show: true, msg: payload.message.toString() });
       return;
     }
+
+    localStorage.setItem(TOKEN_STORAGE_NAME, payload.token);
+    dispatch({ type: AuthActionTypes.UPDATE_TOKEN, payload: payload.token });
+    navigation('/');
   }
 
   return (

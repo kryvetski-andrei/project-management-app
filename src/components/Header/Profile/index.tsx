@@ -1,15 +1,29 @@
-import { Avatar, IconButton, Menu, MenuItem } from '@mui/material';
+import { Avatar, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import { ReactElement, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { AuthActionTypes, TOKEN_STORAGE_NAME } from '../../../utils/types/authorization';
 
 function Profile(): ReactElement {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const dispatch = useDispatch();
+  const navigation = useNavigate();
+
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+
+  function handleClick(event: React.MouseEvent<HTMLElement>): void {
     setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
+  }
+
+  function handleClose(): void {
     setAnchorEl(null);
-  };
+  }
+
+  function signout(): void {
+    localStorage.removeItem(TOKEN_STORAGE_NAME);
+    dispatch({ type: AuthActionTypes.UPDATE_TOKEN, payload: null });
+    navigation('/login');
+  }
 
   return (
     <>
@@ -33,7 +47,8 @@ function Profile(): ReactElement {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <MenuItem>Edit profile</MenuItem>
-        <MenuItem>Sign out</MenuItem>
+        <Divider />
+        <MenuItem onClick={signout}>Sign out</MenuItem>
       </Menu>
     </>
   );
