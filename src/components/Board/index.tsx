@@ -1,64 +1,47 @@
-import { memo, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useDrop } from 'react-dnd';
-import update from 'immutability-helper';
 import { Column } from './components/Column';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
-import { useDispatch } from 'react-redux';
 import { ItemTypes } from '../../utils/types/DnDItems';
+import { fetchBoard } from '../../store/action-creators/board';
+import { useActions } from '../../hooks/useActions';
+import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../utils/api/config';
 
 const style = {
   display: 'flex',
   gap: 10,
 };
 
-export const Board = memo(function Board() {
-  const columns = useTypedSelector((state) => state.board.columns);
-  const dispatch = useDispatch();
+export const Board = () => {
+  const { columns, loading, error } = useTypedSelector((state) => state.board);
+  const { fetchBoard } = useActions();
 
-  const findColumn = useCallback(
-    (id: string) => {
-      const column = columns.filter((c) => `${c.id}` === id)[0];
+  useEffect(() => {
+    fetchBoard(temporaryBoardIdPath);
+  }, []);
 
-      return {
-        column,
-        index: columns.indexOf(column),
-      };
-    },
-    [columns]
-  );
+  // const [, drop] = useDrop(() => ({
+  //   accept: ItemTypes.COLUMN,
+  //   collect: (monitor) => ({
+  //     isDrop: monitor.didDrop(),
+  //   }),
+  // }));
 
-  const moveColumn = useCallback(
-    (id: string, atIndex: number) => {
-      const { column, index } = findColumn(id);
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
-      dispatch({
-        type: 'UPDATE_COLUMNS',
-        payload: update(columns, {
-          $splice: [
-            [index, 1],
-            [atIndex, 0, column],
-          ],
-        }),
-      });
-    },
-    [findColumn, columns]
-  );
+  if (error) {
+    return <h1>{error}</h1>;
+  }
 
-  const [, drop] = useDrop(() => ({ accept: ItemTypes.COLUMN }));
   return (
-    <div ref={drop} style={style}>
+    <div style={style}>
       {columns.map((column) => (
-        <Column
-          key={column.id}
-          id={`${column.id}`}
-          title={column.title}
-          tasks={column.tasks}
-          moveColumn={moveColumn}
-          findColumn={findColumn}
-        />
+        <Column key={column.id} id={column.id} title={column.id} tasks={column.tasks} />
       ))}
     </div>
   );
-});
+};
 
 export default Board;

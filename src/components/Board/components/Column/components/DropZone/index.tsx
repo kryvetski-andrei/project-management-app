@@ -6,6 +6,8 @@ import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import { Task } from '../Task';
 import { ItemTypes } from '../../../../../../utils/types/DnDItems';
+import { ITask } from '../../../../../../utils/types/Task';
+import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../../../../../utils/api/config';
 
 const style: CSSProperties = {
   border: '1px dashed gray',
@@ -21,9 +23,8 @@ interface Item {
   height: number;
 }
 
-const DropZone = (props: { id: number; columnId: number }) => {
-  const columns = useTypedSelector((state) => state.board.columns);
-  const currentTask = useTypedSelector((state) => state.board.currentTask);
+const DropZone = (props: { id: number; columnId: string }) => {
+  const { columns, currentTask } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
 
   const [height, setHeight] = useState(10);
@@ -50,8 +51,8 @@ const DropZone = (props: { id: number; columnId: number }) => {
         setHeight(H);
       },
 
-      drop({ id: bolowTaskId, columnId: belowColumnId }) {
-        addTask(belowColumnId, bolowTaskId, columnId, id);
+      drop({ id: currentTaskId, columnId: currentColumnId }) {
+        addTask(currentColumnId, currentTaskId, columnId, id);
       },
 
       collect: (monitor) => ({
@@ -75,18 +76,55 @@ const DropZone = (props: { id: number; columnId: number }) => {
   }, []);
 
   const addTask = useCallback(
-    (columnId: string, taskId: string, dropZoneColumnId: number, dropZoneId: number) => {
-      const { columnIndex } = findTask(`${dropZoneId}`, `${dropZoneColumnId}`);
-      const changeId = (task: Task) => {
-        return update(task, { columnId: { $set: dropZoneColumnId } });
-      };
-
+    (columnId: string, taskId: string, dropZoneColumnId: string, dropZoneId: number) => {
+      const { column, columnIndex } = findTask(taskId, dropZoneColumnId);
+      // const changeId = (task: ITask) => {
+      //   return update(task, { columnId: { $set: dropZoneColumnId } });
+      // };
+      //
       dispatch({
         type: 'UPDATE_COLUMNS',
         payload: update(columns, {
-          [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, changeId(currentTask!)]] } },
+          [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, currentTask!.task]] } },
+          //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
         }),
       });
+
+      const sendTask = async (task: ITask) => {
+        const modyTask = {
+          title: task.title,
+          description: task.description,
+          userId: 'ef04c85a-a95c-4a47-96f2-6ebe50645730',
+        };
+        const response = await fetch(
+          `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${dropZoneColumnId}/tasks`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${temporaryToken}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(modyTask),
+          }
+        );
+        return await response.json();
+      };
+
+      const deleteTask = async (task: ITask) => {
+        await fetch(
+          `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks/${task.id}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${temporaryToken}`,
+            },
+          }
+        );
+      };
+
+      sendTask(currentTask!.task);
+      deleteTask(currentTask!.task);
     },
     []
   );
