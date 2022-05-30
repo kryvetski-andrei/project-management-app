@@ -6,11 +6,20 @@ import ErrorPage from '../../pages/ErrorPage';
 import BoardPage from '../../pages/BoardPage';
 import LogInPage from '../../pages/LogInPage';
 import SignUpPage from '../../pages/SignUpPage';
+import RequireAuth from './RequireAuth';
+
 const AppRouter = () => {
   return (
     <Routes>
       <Route path={pagesPath.welcomeUsPagePath} element={<WelcomePage />} />
-      <Route path={pagesPath.mainPagePath} element={<MainPage />} />
+      <Route
+        path={pagesPath.mainPagePath}
+        element={
+          <RequireAuth redirect="/welcome">
+            <MainPage />
+          </RequireAuth>
+        }
+      />
       <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
       <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
       <Route path={pagesPath.boardPagePath} element={<BoardPage />} />

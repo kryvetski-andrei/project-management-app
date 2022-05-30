@@ -7,6 +7,7 @@ import {
 
 const defaultState: IAuthState = {
   token: localStorage.getItem(TOKEN_STORAGE_NAME),
+  userId: null,
 };
 
 export const authReducer = (state = defaultState, action: IAuthdAction): IAuthState => {
