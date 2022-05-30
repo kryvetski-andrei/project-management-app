@@ -9,7 +9,7 @@ function App() {
     <DndProvider backend={HTML5Backend}>
       <Header />
       <AppRouter />
-      {/* <Footer /> */}
+      <Footer />
     </DndProvider>
   );
 }
