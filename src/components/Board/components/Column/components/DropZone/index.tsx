@@ -6,10 +6,17 @@ import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import { Task } from '../Task';
 import { ItemTypes } from '../../../../../../utils/types/DnDItems';
+import { ITask } from '../../../../../../utils/types/Task';
+import {
+  BASE_URL,
+  temporaryBoardIdPath,
+  temporaryToken,
+  temporaryUserId,
+} from '../../../../../../utils/api/config';
 
 const style: CSSProperties = {
-  border: '1px dashed gray',
-  backgroundColor: 'lightcyan',
+  // border: '1px dashed gray',
+  // backgroundColor: 'lightcyan',
   position: 'relative',
   cursor: 'move',
   transition: 'ease 0.15s',
@@ -21,12 +28,11 @@ interface Item {
   height: number;
 }
 
-const DropZone = (props: { id: number; columnId: number }) => {
-  const columns = useTypedSelector((state) => state.board.columns);
-  const currentTask = useTypedSelector((state) => state.board.currentTask);
+const DropZone = (props: { id: number; columnId: string }) => {
+  const { columns, currentTask } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
 
-  const [height, setHeight] = useState(10);
+  const [height, setHeight] = useState(20);
   const { id, columnId } = props;
 
   const hoverDropZone = useCallback(
@@ -40,18 +46,12 @@ const DropZone = (props: { id: number; columnId: number }) => {
     () => ({
       accept: ItemTypes.TASK,
       item: { id },
-      hover({ id: currentTaskId, columnId: currentColumnId, height: H }: Item, monitor) {
-        const currentTask = {
-          columnId: currentColumnId,
-          taskId: currentTaskId,
-          taskHeight: H,
-        };
-
-        setHeight(H);
+      hover({ height: H }: Item, monitor) {
+        hoverDropZone(H + 40);
       },
 
-      drop({ id: bolowTaskId, columnId: belowColumnId }) {
-        addTask(belowColumnId, bolowTaskId, columnId, id);
+      drop({ id: currentTaskId, columnId: currentColumnId }) {
+        addTask(currentColumnId, currentTaskId, columnId, id);
       },
 
       collect: (monitor) => ({
@@ -75,18 +75,143 @@ const DropZone = (props: { id: number; columnId: number }) => {
   }, []);
 
   const addTask = useCallback(
-    (columnId: string, taskId: string, dropZoneColumnId: number, dropZoneId: number) => {
-      const { columnIndex } = findTask(`${dropZoneId}`, `${dropZoneColumnId}`);
-      const changeId = (task: Task) => {
-        return update(task, { columnId: { $set: dropZoneColumnId } });
-      };
-
+    (columnId: string, taskId: string, dropZoneColumnId: string, dropZoneId: number) => {
+      const { column, columnIndex, taskIndex, task } = findTask(taskId, dropZoneColumnId);
+      console.log(columnId);
+      console.log(taskId);
+      const updatedColumn = update(columns, {
+        [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, currentTask!.task]] } },
+        //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+      });
       dispatch({
         type: 'UPDATE_COLUMNS',
-        payload: update(columns, {
-          [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, changeId(currentTask!)]] } },
-        }),
+        payload: updatedColumn,
       });
+
+      const sendTask = async (task: ITask) => {
+        // const modyTask = {
+        //   title: task.title,
+        //   description: task.description,
+        //   userId: temporaryUserId,
+        // };
+        // const response = await fetch(
+        //   `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${dropZoneColumnId}/tasks`,
+        //   {
+        //     method: 'POST',
+        //     headers: {
+        //       Authorization: `Bearer ${temporaryToken}`,
+        //       Accept: 'application/json',
+        //       'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(modyTask),
+        //   }
+        // );
+
+        const createdTask = {
+          title: task.title,
+          order: dropZoneId + 1,
+          description: task.description,
+          userId: temporaryUserId,
+          boardId: temporaryBoardIdPath,
+          columnId: columnId,
+        };
+
+        const expect = {
+          title: 'jopa',
+          order: 1,
+          description: task.description,
+          userId: 'f1ab4773-ecf5-4e4f-a7aa-43fdd87b5c98',
+          boardId: '39add458-96f5-4416-9eaa-b36517c4527a',
+          columnId: '69a0f823-0a32-40a8-8d87-db8bc2793768',
+        };
+
+        console.log(createdTask);
+        console.log(expect);
+        console.log(dropZoneId);
+        const targetIndex = dropZoneId + 1;
+
+        const response = await fetch(
+          `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks/${task.id}`,
+          {
+            method: 'PUT',
+            headers: {
+              Authorization: `Bearer ${temporaryToken}`,
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              title: task.title,
+              order: targetIndex,
+              description: task.description,
+              userId: temporaryUserId,
+              boardId: temporaryBoardIdPath,
+              columnId: dropZoneColumnId,
+            }),
+          }
+        );
+
+        return await response.json();
+        console.log('succes');
+        // const createdTask = await response.json();
+        // console.log(createdTask, 'created tasl');
+        // console.log(
+        //   {
+        //     title: createdTask.title,
+        //     order: dropZoneId + 1,
+        //     description: createdTask.description,
+        //     userId: temporaryBoardIdPath,
+        //     boardId: temporaryBoardIdPath,
+        //     columnId: dropZoneColumnId,
+        //   },
+        //   'updated created task'
+        // );
+        // await fetch(
+        //   `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${dropZoneColumnId}/tasks/${createdTask.id}`,
+        //   {
+        //     method: 'PUT',
+        //     headers: {
+        //       Authorization: `Bearer ${temporaryToken}`,
+        //       Accept: 'application/json',
+        //       'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //       title: createdTask.title,
+        //       order: dropZoneId + 1,
+        //       description: createdTask.description,
+        //       userId: temporaryBoardIdPath,
+        //       boardId: temporaryBoardIdPath,
+        //       columnId: dropZoneColumnId,
+        //     }),
+        //   }
+        // );
+
+        // dispatch({
+        //   type: 'UPDATE_COLUMNS',
+        //   payload: update(updatedColumn, {
+        //     [columnIndex]: { tasks: { [dropZoneId]: { id: { $set: createdTask.id } } } },
+        //     //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+        //   }),
+        // });
+
+        // console.log(createdTask);
+        // return createdTask;
+      };
+
+      // const deleteTask = async (task: ITask) => {
+      //   console.log(task.id, 'task id');
+      //   await fetch(
+      //     `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks/${task.id}`,
+      //     {
+      //       method: 'DELETE',
+      //       headers: {
+      //         Authorization: `Bearer ${temporaryToken}`,
+      //       },
+      //     }
+      //   );
+      // };
+
+      sendTask(currentTask!.task);
+      // deleteTask(currentTask!.task);
     },
     []
   );
@@ -103,7 +228,7 @@ const DropZone = (props: { id: number; columnId: number }) => {
     }, [isOver]);
   };
 
-  useLeave(() => setHeight(10), isOver);
+  useLeave(() => setHeight(20), isOver);
 
   return <div ref={(node) => drop(node)} style={{ ...style, height }}></div>;
 };

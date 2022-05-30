@@ -1,24 +1,62 @@
 import { ITask } from '../Task';
 import { IColumn } from '../Column';
 
+export interface IBoard {
+  id: string;
+  title: string;
+  description: string;
+}
+
 export interface IBoardState {
   columns: IColumn[];
-  currentTask: ITask | null;
+  loading: boolean;
+  error: string | null;
+  currentTask: {
+    task: ITask;
+    taskIndex: number;
+    columnIndex: number;
+  } | null;
 }
 
 export enum BoardActionTypes {
+  FETCH_BOARD = 'FETCH_BOARD',
+  FETCH_BOARD_SUCCESS = 'FETCH_BOARD_SUCCESS',
+  FETCH_BOARD_ERROR = 'FETCH_BOARD_ERROR',
   UPDATE_COLUMNS = 'UPDATE_COLUMNS',
   ADD_CURRENT_TASK = 'ADD_CURRENT_TASK',
 }
 
-export interface IActionUpdateColumns {
+interface IActionFetchBoard {
+  type: BoardActionTypes.FETCH_BOARD;
+}
+
+interface IActionFetchBoardSuccess {
+  type: BoardActionTypes.FETCH_BOARD_SUCCESS;
+  payload: IColumn[];
+}
+
+interface IActionFetchBoardError {
+  type: BoardActionTypes.FETCH_BOARD_ERROR;
+  payload: string;
+}
+
+interface IActionUpdateColumns {
   type: BoardActionTypes.UPDATE_COLUMNS;
   payload: IColumn[];
 }
 
-export interface IActionAddTask {
+interface IActionAddTask {
   type: BoardActionTypes.ADD_CURRENT_TASK;
-  payload: ITask | null;
+  payload: {
+    task: ITask;
+    taskIndex: number;
+    columnIndex: number;
+  };
 }
 
-export type IBoardAction = IActionUpdateColumns | IActionAddTask;
+export type IBoardAction =
+  | IActionFetchBoard
+  | IActionFetchBoardSuccess
+  | IActionFetchBoardError
+  | IActionUpdateColumns
+  | IActionAddTask;

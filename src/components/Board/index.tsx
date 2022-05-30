@@ -1,64 +1,59 @@
-import { memo, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useDrop } from 'react-dnd';
-import update from 'immutability-helper';
 import { Column } from './components/Column';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
-import { useDispatch } from 'react-redux';
 import { ItemTypes } from '../../utils/types/DnDItems';
+import { fetchBoard } from '../../store/action-creators/board';
+import { useActions } from '../../hooks/useActions';
+import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../utils/api/config';
+import { Box, Button, CircularProgress } from '@mui/material';
+import styles from './index.module.scss';
+import AddIcon from '@mui/icons-material/Add';
+import { ColumnModal } from './components/Modal';
 
-const style = {
-  display: 'flex',
-  gap: 10,
-};
+export const Board = () => {
+  const { columns, loading, error } = useTypedSelector((state) => state.board);
+  const { fetchBoard } = useActions();
 
-export const Board = memo(function Board() {
-  const columns = useTypedSelector((state) => state.board.columns);
-  const dispatch = useDispatch();
+  useEffect(() => {
+    fetchBoard(temporaryBoardIdPath);
+  }, []);
 
-  const findColumn = useCallback(
-    (id: string) => {
-      const column = columns.filter((c) => `${c.id}` === id)[0];
+  // const [, drop] = useDrop(() => ({
+  //   accept: ItemTypes.COLUMN,
+  //   collect: (monitor) => ({
+  //     isDrop: monitor.didDrop(),
+  //   }),
+  // }));
 
-      return {
-        column,
-        index: columns.indexOf(column),
-      };
-    },
-    [columns]
-  );
+  if (loading) {
+    return (
+      <div
+        style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <CircularProgress />
+      </div>
+    );
+  }
 
-  const moveColumn = useCallback(
-    (id: string, atIndex: number) => {
-      const { column, index } = findColumn(id);
+  if (error) {
+    return <h1>{error}</h1>;
+  }
 
-      dispatch({
-        type: 'UPDATE_COLUMNS',
-        payload: update(columns, {
-          $splice: [
-            [index, 1],
-            [atIndex, 0, column],
-          ],
-        }),
-      });
-    },
-    [findColumn, columns]
-  );
-
-  const [, drop] = useDrop(() => ({ accept: ItemTypes.COLUMN }));
   return (
-    <div ref={drop} style={style}>
+    <Box className={styles.board}>
       {columns.map((column) => (
-        <Column
-          key={column.id}
-          id={`${column.id}`}
-          title={column.title}
-          tasks={column.tasks}
-          moveColumn={moveColumn}
-          findColumn={findColumn}
-        />
+        <Column key={column.id} id={column.id} title={column.title} tasks={column.tasks} />
       ))}
-    </div>
+      <Box>
+        <ColumnModal />
+        {/*<Button className={styles.addColumnButton}>*/}
+        {/*  <AddIcon />*/}
+        {/*  Create Column*/}
+        {/*</Button>*/}
+      </Box>
+    </Box>
   );
-});
+};
 
 export default Board;

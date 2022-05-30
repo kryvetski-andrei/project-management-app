@@ -1,8 +1,17 @@
 import type { CSSProperties, FC } from 'react';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { Task } from './components/Task';
 import DropZone from './components/DropZone';
+import { ITask } from '../../../../utils/types/Task';
+import { useTypedSelector } from '../../../../hooks/useTypeSelector';
+import { useActions } from '../../../../hooks/useActions';
+import { useDispatch } from 'react-redux';
+import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../../../utils/api/config';
+import update from 'immutability-helper';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { ColumnMenu } from './components/Menu';
+import styles from './index.module.scss';
 
 const ItemTypes = {
   COLUMN: 'column',
@@ -10,27 +19,33 @@ const ItemTypes = {
 };
 
 const style: CSSProperties = {
-  border: '1px dashed gray',
-  width: 400,
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
+  // border: '1px dashed gray',
+  width: '350px',
+  // padding: '0.5rem 0',
+  // marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
+  height: '100%',
+  overflowY: 'hidden',
 };
 
-interface ITask {
-  id: number;
-  title: string;
-}
+// interface ITask {
+//   id: number;
+//   title: string;
+// }
 
-interface IColum {
-  id: number;
-  title: string;
-  tasks: ITask[];
-}
+// interface IColum {
+//   id: number;
+//   title: string;
+//   tasks: ITask[];
+// }
+
+// type DropZone = {
+//   id: string;
+// };
 
 type DropZone = {
-  id: number;
+  dropZoneOrder: number;
 };
 
 type TaskList = ITask | DropZone;
@@ -42,9 +57,7 @@ const isTask = (item: TaskList): item is ITask => {
 export interface ColumnProps {
   id: string;
   title: string;
-  tasks: Task[];
-  moveColumn: (id: string, to: number) => void;
-  findColumn: (id: string) => { index: number };
+  tasks: ITask[];
 }
 
 interface Item {
@@ -52,14 +65,40 @@ interface Item {
   originalIndex: number;
 }
 
-export const Column: FC<ColumnProps> = memo(function Column({
-  id,
-  title,
-  tasks,
-  moveColumn,
-  findColumn,
-}) {
+export const Column: FC<ColumnProps> = ({ id, title, tasks }) => {
+  const { columns, loading, error } = useTypedSelector((state) => state.board);
+  const dispatch = useDispatch();
+
+  const findColumn = useCallback(
+    (id: string) => {
+      const column = columns.filter((c) => `${c.id}` === id)[0];
+
+      return {
+        column,
+        index: columns.indexOf(column),
+      };
+    },
+    [columns]
+  );
+
+  const moveColumn = useCallback(
+    (id: string, atIndex: number) => {
+      const { column, index } = findColumn(id);
+      dispatch({
+        type: 'UPDATE_COLUMNS',
+        payload: update(columns, {
+          $splice: [
+            [index, 1],
+            [atIndex, 0, column],
+          ],
+        }),
+      });
+    },
+    [findColumn, columns]
+  );
+
   const originalIndex = findColumn(id).index;
+
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: ItemTypes.COLUMN,
@@ -75,7 +114,23 @@ export const Column: FC<ColumnProps> = memo(function Column({
         }
       },
     }),
-    [id, originalIndex, moveColumn]
+    [id, originalIndex, moveColumn, tasks]
+  );
+
+  const sendColumn = useCallback(
+    async (id: string, column: { title: string; order: number }) => {
+      const response = await fetch(`${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${id}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${temporaryToken}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(column),
+      });
+      return await response.json();
+    },
+    [columns]
   );
 
   const [, drop] = useDrop(
@@ -87,21 +142,25 @@ export const Column: FC<ColumnProps> = memo(function Column({
           moveColumn(draggedId, overIndex);
         }
       },
+      drop({ id: draggedId }: Item) {
+        const { index: overIndex } = findColumn(id);
+        sendColumn(draggedId, { title: title, order: overIndex + 1 });
+      },
     }),
-    [findColumn, moveColumn]
+    [findColumn, moveColumn, tasks]
   );
 
-  const fillTasksWithDropZones = (tasks: Task[]) => {
+  const fillTasksWithDropZones = (tasks: ITask[]) => {
     const dropZone = {
-      id: 0,
-      columnId: 0,
+      dropZoneOrder: 0,
     };
-    let id = dropZone.id;
-    return tasks.reduce(
+
+    let dropZoneOrder = dropZone.dropZoneOrder;
+
+    return tasks.reduce<Array<DropZone | ITask>>(
       (tasksWithDropZones, task) => {
-        tasksWithDropZones.push(task);
-        tasksWithDropZones.push({ id: (id += 1), columnId: task.columnId });
-        tasksWithDropZones[0].columnId = task.columnId;
+        tasksWithDropZones.push(task as ITask);
+        tasksWithDropZones.push({ dropZoneOrder: (dropZoneOrder += 1) });
         return tasksWithDropZones;
       },
       [dropZone]
@@ -112,26 +171,41 @@ export const Column: FC<ColumnProps> = memo(function Column({
     return 'title' in item;
   };
 
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <h1>{error}</h1>;
+  }
+
   const opacity = isDragging ? 0 : 1;
+
   return (
     <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
-      {title}
-      {fillTasksWithDropZones(tasks).map((task: DropZone | ITask, index) =>
-        isTask(task) ? (
-          <Task
-            key={task.id}
-            columnId={`${(task as Task).columnId}`}
-            id={`${task.id}`}
-            title={(task as Task).title}
-          />
-        ) : (
-          <DropZone
-            key={index + Date.now()}
-            id={(task as DropZone).id}
-            columnId={(task as Task).columnId}
-          />
-        )
-      )}
+      <Box className={styles.columnHeader}>
+        <Typography>{title}</Typography>
+        <ColumnMenu boardId={temporaryBoardIdPath} columnId={id} />
+      </Box>
+      <Box className={styles.tasksWrapper}>
+        {fillTasksWithDropZones(tasks).map((task: DropZone | ITask, index) =>
+          isTask(task) ? (
+            <Task
+              key={(task as ITask).id}
+              columnId={id}
+              id={`${(task as ITask).id}`}
+              title={(task as ITask).title}
+              description={(task as ITask).description}
+            />
+          ) : (
+            <DropZone
+              key={index + Date.now()}
+              id={(task as DropZone).dropZoneOrder}
+              columnId={id}
+            />
+          )
+        )}
+      </Box>
     </div>
   );
-});
+};
