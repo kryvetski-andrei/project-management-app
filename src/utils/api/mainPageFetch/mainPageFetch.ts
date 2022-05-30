@@ -1,49 +1,73 @@
-import { Board } from '../../types/MainPage.ts/index';
+import { Board, NewBoard } from '../../types/MainPage.ts/index';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzU2MGZmMi05ZDkxLTRhMjItOTY4MS01MmU3ZmU0ZTI0OGQiLCJsb2dpbiI6InJvdXJvdSIsImlhdCI6MTY1MzA3NTc3MH0.4VdpFxDzaUEbYu2f_6ugt4mDCn628zu7mub790LFbJU';
+export const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5YjAwOWYzOC1mNzI5LTRjZTEtYjk2Zi1iYjBmNDAyNDhlOTMiLCJsb2dpbiI6ImthdGUwMyIsImlhdCI6MTY1MzQyNDk4OX0.-kjmx6z1aGAPChnj3-CfFTCT3nftk9QXto4zWLzFyaI';
 
-export const getBoards = async (setResult: React.Dispatch<React.SetStateAction<Board[]>>) => {
+export const getBoards = createAsyncThunk('main/getBoards', async (_, { rejectWithValue }) => {
   try {
-    const response = await fetch('https://kryvetski-rs-pma-be.herokuapp.com/boards', {
+    const response = await fetch('https://kryvetski-be.herokuapp.com/boards', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
+    if (!response.ok) {
+      throw new Error('Server Error!');
+    }
     const result = await response.json();
-    console.log(result);
-    setResult(result);
+    return result;
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
   }
-};
+});
 
-export const setNewBoard = async (title: { [key: string]: string }) => {
-  try {
-    await fetch('https://kryvetski-rs-pma-be.herokuapp.com/boards', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(title),
-    });
-  } catch (error) {
-    console.log(error);
+export const setNewBoard = createAsyncThunk(
+  'main/setNewBoard',
+  async (board: NewBoard, { rejectWithValue }) => {
+    try {
+      const response = await fetch('https://kryvetski-be.herokuapp.com/boards', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(board),
+      });
+      if (!response.ok) throw new Error(`${response.statusText}. Can't create board!`);
+      else {
+        const result = await response.json();
+        return result;
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+    }
   }
-};
+);
 
-export const deleteBoard = async (id: string) => {
-  try {
-    await fetch(`https://kryvetski-rs-pma-be.herokuapp.com/boards/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  } catch (error) {
-    console.log(error);
+export const deleteBoard = createAsyncThunk(
+  'main/deleteBoard',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`https://kryvetski-be.herokuapp.com/boards/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`${response.statusText}. Can't delete board!`);
+      }
+      return id;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+    }
   }
-};
+);
