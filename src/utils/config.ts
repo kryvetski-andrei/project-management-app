@@ -4,4 +4,5 @@ export const pagesPath = {
   registrationPagePath: '/registration',
   boardPagePath: '/board',
   errorPagePath: '/error',
+  editProfilePagePath: '/edit',
 };
