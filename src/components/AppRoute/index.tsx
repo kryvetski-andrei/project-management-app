@@ -30,7 +30,7 @@ const AppRouter = () => {
         }
       />
       <Route
-        path={pagesPath.borderPagePath}
+        path={pagesPath.boardPagePath}
         element={
           <RequireAuth redirect="/login">
             <BoardPage />
