@@ -1,20 +1,12 @@
 import { Stack, Typography } from '@mui/material';
-import React from 'react';
+import classes from './index.module.scss';
 
 const ErrorPage = () => {
   return (
-    <div
-      style={{
-        height: '100vh',
-        background: '#d1d8d5',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Stack spacing={4} alignItems="center">
+    <div className={classes.wrapper}>
+      <Stack spacing={4}>
         <Typography variant="h1">404</Typography>
-        <Typography variant="h2">Oops! This Page Not Found!</Typography>
+        <Typography variant="h2">This Page Not Found!</Typography>
       </Stack>
     </div>
   );
