@@ -9,6 +9,9 @@ import { useActions } from '../../../../hooks/useActions';
 import { useDispatch } from 'react-redux';
 import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../../../utils/api/config';
 import update from 'immutability-helper';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { ColumnMenu } from './components/Menu';
+import styles from './index.module.scss';
 
 const ItemTypes = {
   COLUMN: 'column',
@@ -16,12 +19,14 @@ const ItemTypes = {
 };
 
 const style: CSSProperties = {
-  border: '1px dashed gray',
-  width: 400,
-  padding: '0.5rem 1rem',
-  marginBottom: '.5rem',
+  // border: '1px dashed gray',
+  width: '350px',
+  // padding: '0.5rem 0',
+  // marginBottom: '.5rem',
   backgroundColor: 'white',
   cursor: 'move',
+  height: '100%',
+  overflowY: 'hidden',
 };
 
 // interface ITask {
@@ -149,7 +154,9 @@ export const Column: FC<ColumnProps> = ({ id, title, tasks }) => {
     const dropZone = {
       dropZoneOrder: 0,
     };
+
     let dropZoneOrder = dropZone.dropZoneOrder;
+
     return tasks.reduce<Array<DropZone | ITask>>(
       (tasksWithDropZones, task) => {
         tasksWithDropZones.push(task as ITask);
@@ -165,7 +172,7 @@ export const Column: FC<ColumnProps> = ({ id, title, tasks }) => {
   };
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <CircularProgress />;
   }
 
   if (error) {
@@ -176,20 +183,29 @@ export const Column: FC<ColumnProps> = ({ id, title, tasks }) => {
 
   return (
     <div ref={(node) => drag(drop(node))} style={{ ...style, opacity }}>
-      {title}
-      {fillTasksWithDropZones(tasks).map((task: DropZone | ITask, index) =>
-        isTask(task) ? (
-          <Task
-            key={(task as ITask).id}
-            columnId={id}
-            id={`${(task as ITask).id}`}
-            // title={(task as ITask).title}
-            title={(task as ITask).id}
-          />
-        ) : (
-          <DropZone key={index + Date.now()} id={(task as DropZone).dropZoneOrder} columnId={id} />
-        )
-      )}
+      <Box className={styles.columnHeader}>
+        <Typography>{title}</Typography>
+        <ColumnMenu boardId={temporaryBoardIdPath} columnId={id} />
+      </Box>
+      <Box className={styles.tasksWrapper}>
+        {fillTasksWithDropZones(tasks).map((task: DropZone | ITask, index) =>
+          isTask(task) ? (
+            <Task
+              key={(task as ITask).id}
+              columnId={id}
+              id={`${(task as ITask).id}`}
+              title={(task as ITask).title}
+              description={(task as ITask).description}
+            />
+          ) : (
+            <DropZone
+              key={index + Date.now()}
+              id={(task as DropZone).dropZoneOrder}
+              columnId={id}
+            />
+          )
+        )}
+      </Box>
     </div>
   );
 };

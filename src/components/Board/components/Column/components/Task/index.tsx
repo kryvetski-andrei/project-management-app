@@ -7,12 +7,17 @@ import update from 'immutability-helper';
 import { BoardActionTypes } from '../../../../../../utils/types/Board';
 import { ItemTypes } from '../../../../../../utils/types/DnDItems';
 import { ITask } from '../../../../../../utils/types/Task';
+import styles from './index.module.scss';
+import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import IconButton from '@mui/material/IconButton';
+import * as React from 'react';
+import { TaskMenu } from './components/Menu';
+import { temporaryBoardIdPath } from '../../../../../../utils/api/config';
 
 const style: CSSProperties = {
-  border: '1px dashed gray',
-  backgroundColor: 'white',
-  margin: '5px 0',
-  cursor: 'move',
+  // border: '1px dashed gray',
+  cursor: 'grab',
 };
 
 // export interface Task {
@@ -25,6 +30,7 @@ export interface TaskProps {
   columnId: string;
   id: string;
   title: string;
+  description: string;
 }
 
 interface Item {
@@ -33,7 +39,7 @@ interface Item {
   height: number;
 }
 
-export const Task: FC<TaskProps> = ({ columnId, id, title }) => {
+export const Task: FC<TaskProps> = ({ columnId, id, title, description }) => {
   const { columns, loading, error, currentTask } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
 
@@ -132,7 +138,29 @@ export const Task: FC<TaskProps> = ({ columnId, id, title }) => {
 
   return (
     <div ref={(node) => drag(node)} style={{ ...style, opacity }}>
-      <div ref={measuredRef}>{title}</div>
+      <div ref={measuredRef}>
+        <Card sx={{ maxWidth: 345 }}>
+          {/*<CardMedia*/}
+          {/*    component="img"*/}
+          {/*    height="140"*/}
+          {/*    image="/static/images/cards/contemplative-reptile.jpg"*/}
+          {/*    alt="green iguana"*/}
+          {/*/>*/}
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography gutterBottom variant="h6" component="div">
+                {title}
+              </Typography>
+              <TaskMenu boardId={temporaryBoardIdPath} columnId={columnId} taskId={id} />
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {description}
+            </Typography>
+          </CardContent>
+        </Card>
+        {/*{title}*/}
+        {/*<p>{description}</p>*/}
+      </div>
     </div>
   );
 };

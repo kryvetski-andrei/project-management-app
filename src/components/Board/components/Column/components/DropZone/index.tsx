@@ -10,8 +10,8 @@ import { ITask } from '../../../../../../utils/types/Task';
 import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../../../../../utils/api/config';
 
 const style: CSSProperties = {
-  border: '1px dashed gray',
-  backgroundColor: 'lightcyan',
+  // border: '1px dashed gray',
+  // backgroundColor: 'lightcyan',
   position: 'relative',
   cursor: 'move',
   transition: 'ease 0.15s',
@@ -27,7 +27,7 @@ const DropZone = (props: { id: number; columnId: string }) => {
   const { columns, currentTask } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
 
-  const [height, setHeight] = useState(10);
+  const [height, setHeight] = useState(20);
   const { id, columnId } = props;
 
   const hoverDropZone = useCallback(
@@ -41,14 +41,8 @@ const DropZone = (props: { id: number; columnId: string }) => {
     () => ({
       accept: ItemTypes.TASK,
       item: { id },
-      hover({ id: currentTaskId, columnId: currentColumnId, height: H }: Item, monitor) {
-        const currentTask = {
-          columnId: currentColumnId,
-          taskId: currentTaskId,
-          taskHeight: H,
-        };
-
-        setHeight(H);
+      hover({ height: H }: Item, monitor) {
+        hoverDropZone(H + 40);
       },
 
       drop({ id: currentTaskId, columnId: currentColumnId }) {
@@ -78,16 +72,13 @@ const DropZone = (props: { id: number; columnId: string }) => {
   const addTask = useCallback(
     (columnId: string, taskId: string, dropZoneColumnId: string, dropZoneId: number) => {
       const { column, columnIndex } = findTask(taskId, dropZoneColumnId);
-      // const changeId = (task: ITask) => {
-      //   return update(task, { columnId: { $set: dropZoneColumnId } });
-      // };
-      //
+      const updatedColumn = update(columns, {
+        [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, currentTask!.task]] } },
+        //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+      });
       dispatch({
         type: 'UPDATE_COLUMNS',
-        payload: update(columns, {
-          [columnIndex]: { tasks: { $splice: [[dropZoneId, 0, currentTask!.task]] } },
-          //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
-        }),
+        payload: updatedColumn,
       });
 
       const sendTask = async (task: ITask) => {
@@ -108,10 +99,23 @@ const DropZone = (props: { id: number; columnId: string }) => {
             body: JSON.stringify(modyTask),
           }
         );
-        return await response.json();
+
+        const createdTask = await response.json();
+
+        dispatch({
+          type: 'UPDATE_COLUMNS',
+          payload: update(updatedColumn, {
+            [columnIndex]: { tasks: { [dropZoneId]: { id: { $set: createdTask.id } } } },
+            //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+          }),
+        });
+
+        console.log(createdTask);
+        return createdTask;
       };
 
       const deleteTask = async (task: ITask) => {
+        console.log(task.id, 'task id');
         await fetch(
           `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks/${task.id}`,
           {
@@ -141,7 +145,7 @@ const DropZone = (props: { id: number; columnId: string }) => {
     }, [isOver]);
   };
 
-  useLeave(() => setHeight(10), isOver);
+  useLeave(() => setHeight(20), isOver);
 
   return <div ref={(node) => drop(node)} style={{ ...style, height }}></div>;
 };

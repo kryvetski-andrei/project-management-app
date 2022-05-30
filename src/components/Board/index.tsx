@@ -6,11 +6,10 @@ import { ItemTypes } from '../../utils/types/DnDItems';
 import { fetchBoard } from '../../store/action-creators/board';
 import { useActions } from '../../hooks/useActions';
 import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../utils/api/config';
-
-const style = {
-  display: 'flex',
-  gap: 10,
-};
+import { Box, Button, CircularProgress } from '@mui/material';
+import styles from './index.module.scss';
+import AddIcon from '@mui/icons-material/Add';
+import { ColumnModal } from './components/Modal';
 
 export const Board = () => {
   const { columns, loading, error } = useTypedSelector((state) => state.board);
@@ -28,7 +27,13 @@ export const Board = () => {
   // }));
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return (
+      <div
+        style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}
+      >
+        <CircularProgress />
+      </div>
+    );
   }
 
   if (error) {
@@ -36,11 +41,18 @@ export const Board = () => {
   }
 
   return (
-    <div style={style}>
+    <Box className={styles.board}>
       {columns.map((column) => (
-        <Column key={column.id} id={column.id} title={column.id} tasks={column.tasks} />
+        <Column key={column.id} id={column.id} title={column.title} tasks={column.tasks} />
       ))}
-    </div>
+      <Box>
+        <ColumnModal />
+        {/*<Button className={styles.addColumnButton}>*/}
+        {/*  <AddIcon />*/}
+        {/*  Create Column*/}
+        {/*</Button>*/}
+      </Box>
+    </Box>
   );
 };
 
