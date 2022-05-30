@@ -40,6 +40,7 @@ function SignUpForm(): ReactElement {
       <TextField
         {...register('name', { required: 'is empty' })}
         label="Name"
+        placeholder="name"
         variant="outlined"
         sx={{ marginBottom: '1rem' }}
         color="success"
@@ -49,6 +50,7 @@ function SignUpForm(): ReactElement {
       <TextField
         {...register('login', { required: 'is empty' })}
         label="Login"
+        placeholder="login"
         variant="outlined"
         sx={{ marginBottom: '1rem' }}
         color="success"
@@ -59,6 +61,7 @@ function SignUpForm(): ReactElement {
         {...register('password', { required: 'is empty' })}
         type="password"
         label="Password"
+        placeholder="password"
         variant="outlined"
         sx={{ marginBottom: '1.5rem' }}
         color="success"

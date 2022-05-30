@@ -2,6 +2,7 @@ import { Avatar, Divider, IconButton, Menu, MenuItem } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { pagesPath } from '../../../utils/config';
 import { AuthActionTypes, TOKEN_STORAGE_NAME } from '../../../utils/types/authorization';
 
 function Profile(): ReactElement {
@@ -22,7 +23,11 @@ function Profile(): ReactElement {
   function signout(): void {
     localStorage.removeItem(TOKEN_STORAGE_NAME);
     dispatch({ type: AuthActionTypes.UPDATE_TOKEN, payload: null });
-    navigation('/login');
+    navigation(pagesPath.loginPagePath);
+  }
+
+  function goToEditProfile(): void {
+    navigation(pagesPath.editProfilePath);
   }
 
   return (
@@ -46,7 +51,7 @@ function Profile(): ReactElement {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>Edit profile</MenuItem>
+        <MenuItem onClick={goToEditProfile}>Edit profile</MenuItem>
         <Divider />
         <MenuItem onClick={signout}>Sign out</MenuItem>
       </Menu>

@@ -3,6 +3,7 @@ import { ReactElement, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getUserIdFromToken } from '../../store/reducers/authReducer';
 import { signin } from '../../utils/api/authorization';
 import { objIsIApiError } from '../../utils/types/api';
 import { AuthActionTypes, TOKEN_STORAGE_NAME } from '../../utils/types/authorization';
@@ -37,6 +38,7 @@ function LogInForm(): ReactElement {
 
     localStorage.setItem(TOKEN_STORAGE_NAME, payload.token);
     dispatch({ type: AuthActionTypes.UPDATE_TOKEN, payload: payload.token });
+    dispatch({ type: AuthActionTypes.UPDATE_USER_ID, payload: getUserIdFromToken(payload.token) });
     navigation('/');
   }
 
@@ -45,6 +47,7 @@ function LogInForm(): ReactElement {
       <TextField
         {...register('login', { required: 'is empty' })}
         label="Login"
+        placeholder="login"
         variant="outlined"
         sx={{ marginBottom: '1rem' }}
         color="success"
@@ -54,6 +57,7 @@ function LogInForm(): ReactElement {
       <TextField
         {...register('password', { required: 'is empty' })}
         type="password"
+        placeholder="password"
         label="Password"
         variant="outlined"
         sx={{ marginBottom: '1.5rem' }}

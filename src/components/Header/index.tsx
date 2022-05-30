@@ -1,9 +1,11 @@
 import { AppBar, Box, Container, useScrollTrigger } from '@mui/material';
 import { cloneElement, ReactElement } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { pagesPath } from '../../utils/config';
+import BoardTools from './BoardTools';
 import styles from './index.module.scss';
+import LanguageMenu from './LanguagesMenu';
 import Profile from './Profile';
 
 const links = [
@@ -26,20 +28,24 @@ function ElevationScroll(props: Props) {
   });
 
   return cloneElement(children, {
-    elevation: 1,
-    position: 'sticky',
-    className: [styles.header, trigger ? styles['header_scroll'] : styles['header_top']].join(' '),
+    dark: trigger ? 1 : 0,
   });
 }
 
-function Header(): ReactElement {
+function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElement {
   const token = useTypedSelector((state) => state.auth.token);
+  const location = useLocation();
 
   return (
-    <ElevationScroll>
-      <AppBar>
-        <Container
-          maxWidth="xl"
+    <AppBar
+      elevation={1}
+      position="sticky"
+      className={[styles.header, props.dark ? styles['header_scroll'] : styles['header_top']].join(
+        ' '
+      )}
+    >
+      <Container maxWidth="xl">
+        <Box
           sx={{
             display: 'flex',
             height: '100%',
@@ -55,17 +61,33 @@ function Header(): ReactElement {
             sx={{
               display: 'flex',
               minWidth: '10rem',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
               alignItems: 'center',
             }}
           >
             {token != null ? (
-              <Profile />
+              <>
+                {location.pathname !== pagesPath.mainPagePath ? (
+                  <NavLink
+                    className={({ isActive }) => {
+                      return [isActive ? 'active' : '', styles['header__btn']].join(' ');
+                    }}
+                    key="go to main"
+                    to="/"
+                  >
+                    Go to main
+                  </NavLink>
+                ) : (
+                  ''
+                )}
+                <LanguageMenu dark={props.dark === 1} />
+                <Profile />
+              </>
             ) : (
               links.map(({ text, path }) => (
                 <NavLink
                   className={({ isActive }) => {
-                    return [isActive ? 'active' : '', styles['header__link']].join(' ');
+                    return [isActive ? 'active' : '', styles['header__btn']].join(' ');
                   }}
                   key={text}
                   to={path}
@@ -75,10 +97,27 @@ function Header(): ReactElement {
               ))
             )}
           </Box>
-        </Container>
-      </AppBar>
+        </Box>
+        {location.pathname === pagesPath.borderPagePath ? (
+          <BoardTools
+            btnClass={styles['header__btn']}
+            dark={props.dark === 1}
+            onCreateBoard={props.onCreateBoard}
+          />
+        ) : (
+          ''
+        )}
+      </Container>
+    </AppBar>
+  );
+}
+
+function ScrolledHeader(props: { onCreateBoard?: () => void }) {
+  return (
+    <ElevationScroll>
+      <Header onCreateBoard={props.onCreateBoard} />
     </ElevationScroll>
   );
 }
 
-export default Header;
+export default ScrolledHeader;

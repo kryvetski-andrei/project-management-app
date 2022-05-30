@@ -4,7 +4,8 @@ import styles from './index.module.scss';
 import { FormEvent, ReactElement, useState } from 'react';
 
 interface ISearchField {
-  onSearch: (value: string) => void;
+  onSearch?: (value: string) => void;
+  dark?: boolean;
 }
 
 function SearchField(props: ISearchField): ReactElement {
@@ -13,7 +14,9 @@ function SearchField(props: ISearchField): ReactElement {
   function onSubmit(e: FormEvent) {
     e.preventDefault();
 
-    props.onSearch(searchValue);
+    if (typeof props.onSearch === 'function') {
+      props.onSearch(searchValue);
+    }
   }
 
   function onChange(e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) {
@@ -26,7 +29,7 @@ function SearchField(props: ISearchField): ReactElement {
         sx={{
           display: 'flex',
           padding: '.438rem .5rem',
-          backgroundColor: '#F4F4F4',
+          backgroundColor: props.dark ? 'rgb(68,68,68)' : '#F4F4F4',
           borderRadius: '.7rem',
         }}
       >
@@ -34,13 +37,24 @@ function SearchField(props: ISearchField): ReactElement {
           placeholder="Search…"
           inputProps={{
             'aria-label': 'search',
-            sx: { padding: 0, fontSize: '.75rem', fontFamily: 'Poppins' },
+          }}
+          sx={{
+            width: 'calc(100% - 24px)',
+            padding: 0,
+            fontSize: '.75rem',
+            fontFamily: 'Poppins',
+            color: props.dark ? 'white' : 'black',
           }}
           value={searchValue}
           onChange={onChange}
         />
-        <div className={styles['search-field__icon-wrapper']}>
-          <SearchIcon color="action" />
+        <div
+          className={
+            (styles['search-field__icon-wrapper'],
+            styles[props.dark ? 'color_white' : 'color_black'])
+          }
+        >
+          <SearchIcon color="inherit" />
         </div>
       </Box>
     </form>
