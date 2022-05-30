@@ -1,8 +1,4 @@
-.header {
-  height: 4em;
-
-  transition: background-color 5s ease-in-out;
-}
+.header { transition: background-color 5s ease-in-out; }
 
 .header_top { background-color: white !important; }
 
@@ -10,10 +6,10 @@
 
 .header_scroll .header__logo { color: white; }
 
-.header_scroll .header__link {
+.header_scroll .header__btn {
   color: white;
 
-  background-color: rgb(68, 68, 68); 
+  background-color: rgb(68,68,68); 
 }
 
 .header__logo {
@@ -26,9 +22,10 @@
   cursor: pointer;
 }
 
-.header__link {
+.header__btn {
   display: block;
   padding: .759rem .938rem;
+  border: 0;
   border-radius: 1rem;
 
   background-color: rgba(244,244,244,1);
@@ -42,9 +39,9 @@
   cursor: pointer;
 }
 
-.header__link:hover {
+.header__btn:hover {
   transform: scale(1.12);
   transition: transform .2s;
 }
 
-.header__link:not(:hover){ transition: transform .2s ease-out; }
+.header__btn:not(:hover){ transition: transform .2s ease-out; }
