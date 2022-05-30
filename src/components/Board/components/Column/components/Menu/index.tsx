@@ -12,7 +12,12 @@ import Divider from '@mui/material/Divider';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { BASE_URL, temporaryToken } from '../../../../../../utils/api/config';
+import {
+  BASE_URL,
+  temporaryBoardIdPath,
+  temporaryToken,
+  temporaryUserId,
+} from '../../../../../../utils/api/config';
 import { FC } from 'react';
 import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
@@ -85,10 +90,72 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
+  const [taskTitleValue, setTaskTitleValue] = React.useState('');
+  const [taskDescriptionValue, setDescriptionTitleValue] = React.useState('');
+  const changeTaskTitleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTaskTitleValue(event.target.value);
+  };
+  const changeTaskDescriptionHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDescriptionTitleValue(event.target.value);
+  };
+  const handleCrateTask = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${temporaryToken}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: taskTitleValue,
+            description: taskDescriptionValue,
+            userId: temporaryUserId,
+          }),
+        }
+      );
+      const task = await response.json();
+      console.log(task);
+      console.log(columns);
+      const { index } = findColumnById(columns, columnId);
+
+      dispatch({
+        type: 'UPDATE_COLUMNS',
+        payload: update(columns, {
+          [index]: { tasks: { $splice: [[0, 0, task]] } },
+          //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+        }),
+      });
+      setLoading(false);
+      setTimeout(() => {
+        setOpenModal(false);
+      }, 500);
+    } catch (e) {}
+  };
+
+  const [confirmation, setConfirmation] = React.useState(false);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleOpenModal = () => setOpenModal(true);
+  const handleOpenCreateTaskModal = () => {
+    setAnchorEl(null);
+    setConfirmation(false);
+    handleOpenModal();
+  };
+
+  const handleOpenConfirmDeleteModal = () => {
+    setAnchorEl(null);
+    setConfirmation(true);
+    handleOpenModal();
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
   const handleCloseModal = () => setOpenModal(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -135,12 +202,17 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={handleOpenCreateTaskModal} disableRipple>
           <AddIcon fontSize="large" />
           Add Task
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleOpenModal} disableRipple color="warning" sx={{ color: 'red' }}>
+        <MenuItem
+          onClick={handleOpenConfirmDeleteModal}
+          disableRipple
+          color="warning"
+          sx={{ color: 'red' }}
+        >
           <DeleteOutlineIcon sx={{ color: 'red' }} />
           Delete
         </MenuItem>
@@ -151,29 +223,74 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            If you understand the consequences...
-          </Typography>
+        {confirmation ? (
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              If you understand the consequences...
+            </Typography>
 
-          <Box
-            component="form"
-            sx={{ '& > :not(style)': { width: '100%' } }}
-            noValidate
-            autoComplete="off"
-          >
-            <LoadingButton
-              color="error"
-              onClick={handleDelete}
-              loading={loading}
-              loadingPosition="start"
-              startIcon={<DeleteOutlineIcon />}
-              variant="contained"
+            <Box
+              component="form"
+              sx={{ '& > :not(style)': { width: '100%' } }}
+              noValidate
+              autoComplete="off"
             >
-              Delete this Column
-            </LoadingButton>
+              <LoadingButton
+                color="error"
+                onClick={handleDelete}
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<DeleteOutlineIcon />}
+                variant="contained"
+              >
+                Delete this Column
+              </LoadingButton>
+            </Box>
           </Box>
-        </Box>
+        ) : (
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Create new task
+            </Typography>
+
+            <Box
+              component="form"
+              sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '20px',
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                id="outlined-basic"
+                label="Enter task title"
+                variant="outlined"
+                value={taskTitleValue}
+                onChange={changeTaskTitleHandler}
+              />
+              <TextField
+                id="outlined-basic"
+                label="Enter task description"
+                variant="outlined"
+                value={taskDescriptionValue}
+                onChange={changeTaskDescriptionHandler}
+              />
+              <LoadingButton
+                color="primary"
+                onClick={handleCrateTask}
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<AddIcon />}
+                variant="contained"
+              >
+                Add this task
+              </LoadingButton>
+            </Box>
+          </Box>
+        )}
       </Modal>
     </div>
   );

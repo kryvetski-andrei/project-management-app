@@ -18,8 +18,30 @@ import {
   temporaryBoardIdPath,
   temporaryToken,
 } from '../../../../../../../../utils/api/config';
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { ColumnProps } from '../../../../index';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Modal from '@mui/material/Modal';
+import update from 'immutability-helper';
+import { useTypedSelector } from '../../../../../../../../hooks/useTypeSelector';
+import { useDispatch } from 'react-redux';
+import { findColumnById } from '../../../../../../utils/findColumnById';
+
+const style = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  backgroundColor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+};
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -64,8 +86,18 @@ interface TaskMenuProps {
 }
 
 export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
+  const { columns } = useTypedSelector((state) => state.board);
+  const dispatch = useDispatch();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const [openModal, setOpenModal] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -73,17 +105,42 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
     setAnchorEl(null);
   };
 
-  const handleDelete = () => {
-    const deleteTask = async () => {
-      await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${temporaryToken}`,
-        },
-      });
-    };
-    deleteTask();
+  const findTask = useCallback(
+    (taskId: string, columnId: string) => {
+      const column = columns.filter((c) =>
+        c.tasks.includes(c.tasks.filter((t) => `${t.id}` === taskId)[0])
+      )[0];
+      const task = column.tasks.filter((t) => `${t.id}` === taskId)[0];
+
+      return {
+        task,
+        taskIndex: column.tasks.indexOf(task),
+        column,
+        columnIndex: columns.indexOf(column),
+      };
+    },
+    [columns]
+  );
+
+  const handleDelete = async () => {
     setAnchorEl(null);
+    setLoading(true);
+    await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${temporaryToken}`,
+      },
+    });
+
+    const { columnIndex, taskIndex } = findTask(taskId, columnId);
+
+    dispatch({
+      type: 'UPDATE_COLUMNS',
+      payload: update(columns, {
+        [columnIndex]: { tasks: { $splice: [[taskIndex, 1]] } },
+        //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
+      }),
+    });
   };
 
   return (
@@ -114,11 +171,42 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
           Edit Task
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleDelete} disableRipple color="warning" sx={{ color: 'red' }}>
+        <MenuItem onClick={handleOpenModal} disableRipple color="warning" sx={{ color: 'red' }}>
           <DeleteOutlineIcon sx={{ color: 'red' }} />
           Delete
         </MenuItem>
       </StyledMenu>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            If you understand the consequences...
+          </Typography>
+
+          <Box
+            component="form"
+            sx={{ '& > :not(style)': { width: '100%' } }}
+            noValidate
+            autoComplete="off"
+          >
+            <LoadingButton
+              color="error"
+              onClick={handleDelete}
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<DeleteOutlineIcon />}
+              variant="contained"
+            >
+              Delete this Task
+            </LoadingButton>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 };

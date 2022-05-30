@@ -26,6 +26,7 @@ export const fetchBoard = (boardId: string) => {
               Authorization: `Bearer ${temporaryToken}`,
               Accept: 'application/json',
               'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
             },
           });
           return await response.json();
