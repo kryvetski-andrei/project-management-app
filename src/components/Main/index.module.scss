@@ -20,18 +20,3 @@
   outline: none;
   cursor: pointer;
 }
-
-.board:nth-child(4n+1) {
-  background: #e3e1e2;
-}
-
-.board:nth-child(4n+2) {
-  background-color: #c5f3e2;
-}
-.board:nth-child(4n+3) {
-  background-color: #ecf0c7;
-}
-
-.board:nth-child(4n+4) {
-  background-color: #f4d6f9;
-}
