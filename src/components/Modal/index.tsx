@@ -8,18 +8,18 @@ import {
 import { ModalProps } from '../../utils/types/Modal';
 
 const Modal = ({
+  open,
+  onClose,
   title,
   content,
   children,
   buttonCancel,
   buttonAgree,
-  open,
-  handleClose,
 }: ModalProps) => {
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       fullWidth={true}
