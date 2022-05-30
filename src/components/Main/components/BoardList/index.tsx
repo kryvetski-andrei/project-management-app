@@ -33,7 +33,6 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
 
   useEffect(() => {
     dispatch(getBoards());
-    console.log('jhgg');
   }, [isFetching]);
 
   const handleClick = (e: React.UIEvent<HTMLButtonElement>) => {

@@ -83,9 +83,6 @@ const Main = () => {
     !isLoading && handleCloseModal();
   };
 
-  // console.log(open);
-  // console.log(error);
-  // console.log(status);
   return (
     <>
       <Container maxWidth="lg">
