@@ -98,7 +98,7 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
             )}
           </Box>
         </Box>
-        {location.pathname === pagesPath.borderPagePath ? (
+        {location.pathname === pagesPath.boardPagePath ? (
           <BoardTools
             btnClass={styles['header__btn']}
             dark={props.dark === 1}

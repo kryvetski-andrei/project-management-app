@@ -1,7 +1,7 @@
 export const LANG_STORAGE_NAME = 'lang';
 
 export interface ILanguageState {
-  current: string;
+  current: string | null;
 }
 
 export enum LanguageActionTypes {

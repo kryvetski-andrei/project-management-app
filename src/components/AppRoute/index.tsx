@@ -20,6 +20,14 @@ const AppRouter = () => {
           </RequireAuth>
         }
       />
+      <Route
+        path={pagesPath.mainPagePath}
+        element={
+          <RequireAuth redirect="/login">
+            <MainPage />
+          </RequireAuth>
+        }
+      />
       <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
       <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
       <Route path={pagesPath.boardPagePath} element={<BoardPage />} />
