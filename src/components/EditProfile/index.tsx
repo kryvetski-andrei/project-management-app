@@ -47,7 +47,6 @@ const EditProfile = () => {
     if (values.password === '') errValidation.password = 'Enter password';
     setErrValidation(errValidation);
     if (Object.values(errValidation)) setDisable(true);
-    console.log(values);
     if (Object.values(values).every((i) => '' !== i)) updateUserData();
   };
 
