@@ -21,6 +21,9 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 400,
   backgroundColor: 'background.paper',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
   boxShadow: 24,
   p: 4,
 };
@@ -98,7 +101,12 @@ export const ColumnModal = () => {
 
           <Box
             component="form"
-            sx={{ '& > :not(style)': { width: '100%' } }}
+            sx={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+            }}
             noValidate
             autoComplete="off"
           >
@@ -117,7 +125,7 @@ export const ColumnModal = () => {
               startIcon={<SaveIcon />}
               variant="contained"
             >
-              Create
+              Create Column
             </LoadingButton>
           </Box>
         </Box>

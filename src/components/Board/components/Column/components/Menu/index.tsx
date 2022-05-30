@@ -18,6 +18,25 @@ import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import update from 'immutability-helper';
 import { findColumnById } from '../../../../utils/findColumnById';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import { TextField } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import Modal from '@mui/material/Modal';
+
+const style = {
+  position: 'absolute' as const,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  backgroundColor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '20px',
+};
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -63,9 +82,14 @@ interface ColumnMenuProps {
 export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
   const { columns } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
+  const [openModal, setOpenModal] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -75,6 +99,7 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
   };
 
   const handleDelete = async () => {
+    setLoading(true);
     try {
       await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
         method: 'DELETE',
@@ -91,23 +116,14 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
           $splice: [[index, 1]],
         }),
       });
-
+      setLoading(false);
       setAnchorEl(null);
     } catch (e) {}
   };
 
   return (
     <div>
-      <IconButton
-        // aria-label="delete"
-        // id="demo-customized-button"
-        // aria-controls={open ? 'demo-customized-menu' : undefined}
-        // aria-haspopup="true"
-        // aria-expanded={open ? 'true' : undefined}
-        // // variant="contained"
-        // disableElevation
-        onClick={handleClick}
-      >
+      <IconButton onClick={handleClick}>
         <MoreHorizIcon />
       </IconButton>
       <StyledMenu
@@ -124,11 +140,41 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
           Add Task
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleDelete} disableRipple color="warning" sx={{ color: 'red' }}>
+        <MenuItem onClick={handleOpenModal} disableRipple color="warning" sx={{ color: 'red' }}>
           <DeleteOutlineIcon sx={{ color: 'red' }} />
           Delete
         </MenuItem>
       </StyledMenu>
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            If you understand the consequences...
+          </Typography>
+
+          <Box
+            component="form"
+            sx={{ '& > :not(style)': { width: '100%' } }}
+            noValidate
+            autoComplete="off"
+          >
+            <LoadingButton
+              color="error"
+              onClick={handleDelete}
+              loading={loading}
+              loadingPosition="start"
+              startIcon={<DeleteOutlineIcon />}
+              variant="contained"
+            >
+              Delete this Column
+            </LoadingButton>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 };
