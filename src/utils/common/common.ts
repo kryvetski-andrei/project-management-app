@@ -1,7 +1,5 @@
-export const colorsGenetator = () => {
-  const R = Math.floor(Math.random() * 127 + 127);
-  const G = Math.floor(Math.random() * 127 + 127);
-  const B = Math.floor(Math.random() * 127 + 127);
-  const rgb = (R << 16) + (G << 8) + B;
-  return `#${rgb.toString(16)}`;
+import { UserToken } from '../types/EditProfile';
+
+export const parseToken = (token: string): UserToken => {
+  return JSON.parse(atob(token.split('.')[1]));
 };
