@@ -4,9 +4,10 @@ import WelcomePage from '../../pages/WelcomePage';
 import MainPage from '../../pages/MainPage';
 import ErrorPage from '../../pages/ErrorPage';
 import BoardPage from '../../pages/BoardPage';
-import LogInPage from '../../pages/LogInPage';
 import SignUpPage from '../../pages/SignUpPage';
+import LogInPage from '../../pages/LogInPage';
 import RequireAuth from './RequireAuth';
+import EditProfilePage from '../../pages/EditProfile';
 
 const AppRouter = () => {
   return (
@@ -21,16 +22,21 @@ const AppRouter = () => {
         }
       />
       <Route
-        path={pagesPath.mainPagePath}
+        path={pagesPath.editProfilePath}
         element={
           <RequireAuth redirect="/login">
-            <MainPage />
+            <EditProfilePage />
           </RequireAuth>
         }
       />
-      <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
-      <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
-      <Route path={pagesPath.boardPagePath} element={<BoardPage />} />
+      <Route
+        path={pagesPath.borderPagePath}
+        element={
+          <RequireAuth redirect="/login">
+            <BoardPage />
+          </RequireAuth>
+        }
+      />
       <Route path={pagesPath.loginPagePath} element={<LogInPage />} />
       <Route path={pagesPath.signupPagePath} element={<SignUpPage />} />
       <Route path="*" element={<ErrorPage />} />
