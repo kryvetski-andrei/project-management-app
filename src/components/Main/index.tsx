@@ -1,24 +1,17 @@
-import { Backdrop, Box, Button, CircularProgress, Container, TextField } from '@mui/material';
+import { Button, Container, TextField } from '@mui/material';
 import classes from './index.module.scss';
 import React, { useState, useEffect, lazy } from 'react';
 import Modal from '../../components/Modal';
-import {
-  deleteBoard,
-  getBoards,
-  setNewBoard,
-  token,
-} from '../../utils/api/mainPageFetch/mainPageFetch';
+import { deleteBoard, setNewBoard, token } from '../../utils/api/mainPageFetch/mainPageFetch';
 import BoardList from '../../components/Main/components/BoardList';
 import { Errors, NewBoard } from '../../utils/types/MainPage.ts';
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
 import { mainSlice } from '../../store/reducers/mainReducers';
 import MessageHandler from '../../components/MessageHandler';
 import ButtonWithPreloader from '../../components/ButtonWithPreloader';
-import { ArrowRightAlt } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import { parseToken } from '../../utils/common/common';
 
-// const BoardList = lazy(() => import('../../components/BoardList'));
 const Main = () => {
   const { idBoard, activeModal, openModal, isLoading, error, status } = useAppSelector(
     (state) => state.mainReducer
@@ -38,7 +31,7 @@ const Main = () => {
   useEffect(() => {
     const userData = parseToken(token);
     localStorage.setItem('userId', userData.userId);
-  }, []); //вынести в другой компонент, чтобы при загрузке сразу были данные
+  }, []);
 
   const handleCloseModal = () => {
     dispatch(setOpenModal());
@@ -162,12 +155,6 @@ const Main = () => {
           <button className={classes.button}>Edit profile</button>
         </Link>
       </Container>
-      {/* <Backdrop
-        open={isLoading}
-        sx={{ color: '#ffffff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
-        <CircularProgress color="inherit" size={100} />
-      </Backdrop> */}
     </>
   );
 };

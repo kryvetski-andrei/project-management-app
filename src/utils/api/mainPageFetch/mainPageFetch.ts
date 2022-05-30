@@ -1,4 +1,4 @@
-import { Board, NewBoard } from '../../types/MainPage.ts/index';
+import { NewBoard } from '../../types/MainPage.ts/index';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const token =
