@@ -4,20 +4,18 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
 import BoardList from '../../components/Main/components/BoardList';
 import { Errors, NewBoard } from '../../utils/types/MainPage.ts';
-import { useAppDispatch } from '../../hooks/useAppDispatch';
 import MessageHandler from '../../components/MessageHandler';
 import ButtonWithPreloader from '../../components/ButtonWithPreloader';
-import { Link } from 'react-router-dom';
-import { parseToken } from '../../utils/common/common';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { useActions } from '../../hooks/useActions';
+import { useDispatch } from 'react-redux';
 
 const Main = () => {
   const { idBoard, activeModal, openModal, isLoading, error, status } = useTypedSelector(
     (state) => state.main
   );
+  const dispatch = useDispatch();
   const { setNewBoard, deleteBoard } = useActions();
-  const dispatch = useAppDispatch();
   const [boardData, setboardData] = useState<NewBoard>({ title: '', description: '' });
   const [errValidation, setErrValidation] = useState<Errors>({});
   const [disable, setDisable] = useState<boolean>(true);
