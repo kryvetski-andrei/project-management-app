@@ -9,12 +9,12 @@ import { useTypedSelector } from '../../../../hooks/useTypeSelector';
 import { useActions } from '../../../../hooks/useActions';
 import { useDispatch } from 'react-redux';
 import MyLinkButton from '../LinkButton';
+import Preloader from '../../../Preloader';
 interface BoardListProps {
-  isFetching: boolean;
   createBoard(): void;
 }
 
-const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
+const BoardList = ({ createBoard }: BoardListProps) => {
   const Board = styled(Paper)(({ theme }) => ({
     boxSizing: 'border-box',
     maxWidth: '1180px',
@@ -28,13 +28,13 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
     ...theme.typography.h6,
     color: '#000000',
   }));
-  const { boards } = useTypedSelector((state) => state.main);
+  const { boards, isFetching } = useTypedSelector((state) => state.main);
   const { getBoards } = useActions();
   const dispatch = useDispatch();
 
   useEffect(() => {
     getBoards();
-  }, [isFetching]);
+  }, []);
 
   const handleClick = (e: React.UIEvent<HTMLButtonElement>) => {
     const id = e.currentTarget.id;
@@ -53,25 +53,32 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
   return (
     <>
       {boards ? (
-        <Stack spacing={2} sx={{ position: 'relative' }}>
-          {boards.map(({ id, title, description }) => (
-            <Board className={classes.board} key={id}>
-              <Box className={classes.box}>
-                {title}
-                <IconButton onClick={handleClick} id={id}>
-                  <ClearIcon />
-                </IconButton>
-              </Box>
-              <Box className={classes.box}>
-                <Typography sx={{ color: '#4f4e4e' }}>{description}</Typography>
-                <MyLinkButton id={id} />
-              </Box>
-            </Board>
-          ))}
-        </Stack>
+        <>
+          <h2 className={classes.title}>Board List</h2>
+          <Stack spacing={2} sx={{ position: 'relative' }}>
+            {boards.map(({ id, title, description }) => (
+              <Board className={classes.board} key={id}>
+                <Box className={classes.box}>
+                  {title}
+                  <IconButton onClick={handleClick} id={id}>
+                    <ClearIcon />
+                  </IconButton>
+                </Box>
+                <Box className={classes.box}>
+                  <Typography sx={{ color: '#4f4e4e' }}>{description}</Typography>
+                  <MyLinkButton id={id} />
+                </Box>
+              </Board>
+            ))}
+          </Stack>
+          <button className={classes.button} onClick={createBoard}>
+            Create new board
+          </button>
+        </>
       ) : (
         <EmptyBoardList onClick={createBoard} />
       )}
+      {isFetching && <Preloader open={isFetching} />}
     </>
   );
 };

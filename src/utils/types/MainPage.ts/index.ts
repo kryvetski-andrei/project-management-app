@@ -12,6 +12,7 @@ export interface MainReducersState {
   activeModal: string;
   status: string | null;
   error: string | null;
+  isFetching: boolean;
 }
 
 export interface NewBoard {
@@ -76,6 +77,7 @@ interface ActionSetBoards {
 }
 interface ActionSetNewBoardSuccess {
   type: MainActionTypes.SET_NEW_BOARD_SUCCESS;
+  payload: BoardItem;
 }
 
 interface ActionSetNewBoardError {
@@ -89,6 +91,7 @@ interface ActionDeleteBoards {
 
 interface ActionDeleteNewBoardSuccess {
   type: MainActionTypes.DELETE_BOARD_SUCCESS;
+  payload: string;
 }
 
 interface ActionDeleteNewBoardError {

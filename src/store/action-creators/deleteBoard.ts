@@ -14,7 +14,7 @@ export const deleteBoard = (id: string) => {
       if (!response.ok) {
         throw new Error(`${response.statusText}. Can't delete board!`);
       }
-      dispatch({ type: MainActionTypes.DELETE_BOARD_SUCCESS });
+      dispatch({ type: MainActionTypes.DELETE_BOARD_SUCCESS, payload: id });
       return id;
     } catch (error) {
       if (error instanceof Error) {
