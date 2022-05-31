@@ -1,8 +1,8 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import editProfileReducer from './reducers/editProfileReducer';
-import mainReducer from './reducers/mainReducers';
+// import mainReducer from './reducers/mainReducers';
 const rootReducer = combineReducers({
-  mainReducer,
+  // mainReducer,
   editProfileReducer,
 });
 

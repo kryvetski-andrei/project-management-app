@@ -1,22 +1,22 @@
 import { Button, Container, TextField } from '@mui/material';
 import classes from './index.module.scss';
-import React, { useState, useEffect, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../components/Modal';
-import { deleteBoard, setNewBoard, token } from '../../utils/api/mainPageFetch/mainPageFetch';
 import BoardList from '../../components/Main/components/BoardList';
 import { Errors, NewBoard } from '../../utils/types/MainPage.ts';
-import { useAppDispatch, useAppSelector } from '../../hooks/useAppDispatch';
-import { mainSlice } from '../../store/reducers/mainReducers';
+import { useAppDispatch } from '../../hooks/useAppDispatch';
 import MessageHandler from '../../components/MessageHandler';
 import ButtonWithPreloader from '../../components/ButtonWithPreloader';
 import { Link } from 'react-router-dom';
 import { parseToken } from '../../utils/common/common';
+import { useTypedSelector } from '../../hooks/useTypeSelector';
+import { useActions } from '../../hooks/useActions';
 
 const Main = () => {
-  const { idBoard, activeModal, openModal, isLoading, error, status } = useAppSelector(
-    (state) => state.mainReducer
+  const { idBoard, activeModal, openModal, isLoading, error, status } = useTypedSelector(
+    (state) => state.main
   );
-  const { setOpenModal, setActiveModal } = mainSlice.actions;
+  const { setNewBoard, deleteBoard } = useActions();
   const dispatch = useAppDispatch();
   const [boardData, setboardData] = useState<NewBoard>({ title: '', description: '' });
   const [errValidation, setErrValidation] = useState<Errors>({});
@@ -28,13 +28,10 @@ const Main = () => {
     setErrValidation({});
   }, [openModal]);
 
-  useEffect(() => {
-    const userData = parseToken(token);
-    localStorage.setItem('userId', userData.userId);
-  }, []);
-
   const handleCloseModal = () => {
-    dispatch(setOpenModal());
+    dispatch({
+      type: 'SET_OPEN_MODAL',
+    });
     setDisable(true);
   };
 
@@ -48,7 +45,10 @@ const Main = () => {
 
   const handleClik = () => {
     handleCloseModal();
-    dispatch(setActiveModal('create'));
+    dispatch({
+      type: 'SET_ACTIVE_MODAL',
+      payload: 'create',
+    });
   };
 
   const validateForm = () => {
@@ -63,19 +63,18 @@ const Main = () => {
 
   const createBoard = async () => {
     setOpen(true);
-    await dispatch(setNewBoard(boardData));
+    await setNewBoard(boardData);
     setboardData({ title: '', description: '' });
     setIsFetching(!isFetching);
     !isLoading && handleCloseModal();
   };
 
   const confirmBoardDelete = async () => {
-    await dispatch(deleteBoard(idBoard));
+    await deleteBoard(idBoard);
     setIsFetching(!isFetching);
     setOpen(true);
     !isLoading && handleCloseModal();
   };
-
   return (
     <>
       <Container maxWidth="lg">
@@ -84,7 +83,7 @@ const Main = () => {
         {activeModal === 'create' && (
           <Modal
             open={openModal}
-            onClose={() => dispatch(setOpenModal())}
+            onClose={() => dispatch({ type: 'SET_OPEN_MODAL' })}
             title={'Create a board'}
             buttonCancel={
               <Button onClick={handleCloseModal} variant="contained">
@@ -127,7 +126,7 @@ const Main = () => {
         {activeModal === 'delete' && (
           <Modal
             open={openModal}
-            onClose={() => dispatch(setOpenModal())}
+            onClose={() => dispatch({ type: 'SET_OPEN_MODAL' })}
             title={'Delete a board'}
             content={'Are you sure you want to delete the board?'}
             buttonCancel={
@@ -151,12 +150,10 @@ const Main = () => {
         {status && (
           <MessageHandler open={open} setClose={setOpen} severity="success" text={status} />
         )}
-        <Link to={'/edit'} className={classes.link}>
-          <button className={classes.button}>Edit profile</button>
-        </Link>
       </Container>
     </>
   );
 };
 
 export default Main;
+

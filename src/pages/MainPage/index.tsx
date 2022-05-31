@@ -3,7 +3,7 @@ import Main from '../../components/Main';
 
 const MainPage = () => {
   return (
-    <div>
+    <div style={{ minHeight: '90vh' }}>
       <Main />
     </div>
   );

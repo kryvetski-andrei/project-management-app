@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserUpdate } from '../../types/EditProfile';
-import { token } from '../mainPageFetch/mainPageFetch';
+// import { token } from '../mainPageFetch/mainPageFetch';
 
 export const getUser = createAsyncThunk(
   'editProfile/getUser',
@@ -9,7 +9,7 @@ export const getUser = createAsyncThunk(
       const response = await fetch(`https://kryvetski-be.herokuapp.com/users/${id}`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
       });
@@ -33,7 +33,7 @@ export const updateUser = createAsyncThunk(
       const response = await fetch(`https://kryvetski-be.herokuapp.com/users/${id}`, {
         method: 'PUT',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(user),
@@ -58,7 +58,7 @@ export const deleteUser = createAsyncThunk(
       const response = await fetch(`https://kryvetski-be.herokuapp.com/users/${id}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       if (!response.ok) {
