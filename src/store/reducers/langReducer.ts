@@ -11,6 +11,10 @@ const ruLanguage: ILanguage = {
   global: {
     signUp: 'Зарегистрироваться',
     login: 'Войти',
+    createBoardBtn: 'Создать доску',
+    modalCreateBordTitle: 'Создать доску',
+    buttonCancel: 'Отменить',
+    buttonAgree: 'Создать',
   },
   welcome: {
     pma: 'Приложение для управления проектами',
@@ -40,12 +44,22 @@ const ruLanguage: ILanguage = {
   login: {
     registrText: 'Нет аккаунта? Регистрация',
   },
+  main: {
+    boardList: 'Список досок',
+    modalDeleteBordTitle: 'Удалить доску',
+    modalDeleteBordContent: 'Вы уверены, что хотите удалить доску?',
+    buttonAgreeDelete: 'Удалить',
+  },
 };
 
 const engLanguage: ILanguage = {
   global: {
     signUp: 'Sign Up',
     login: 'Log in',
+    createBoardBtn: 'Create a board',
+    modalCreateBordTitle: 'Создать доску',
+    buttonCancel: 'Cancel',
+    buttonAgree: 'Create',
   },
   welcome: {
     pma: 'Project Management App',
@@ -74,6 +88,12 @@ const engLanguage: ILanguage = {
   },
   login: {
     registrText: "Don't have an account? Sign up",
+  },
+  main: {
+    boardList: 'Board List',
+    modalDeleteBordTitle: 'Delete a board',
+    modalDeleteBordContent: 'Are you sure you want to delete the board?',
+    buttonAgreeDelete: 'Delete',
   },
 };
 

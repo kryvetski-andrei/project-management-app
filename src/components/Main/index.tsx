@@ -21,6 +21,10 @@ const Main = () => {
   const [, setDisable] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(false);
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const { modalDeleteBordTitle, modalDeleteBordContent, buttonAgreeDelete } = useTypedSelector(
+    (state) => state.lang.phrases.main
+  );
+  const { buttonCancel } = useTypedSelector((state) => state.lang.phrases.global);
 
   useEffect(() => {
     setErrValidation({});
@@ -56,18 +60,18 @@ const Main = () => {
           <Modal
             open={openModal}
             onClose={() => dispatch({ type: 'SET_OPEN_MODAL' })}
-            title={'Delete a board'}
-            content={'Are you sure you want to delete the board?'}
+            title={modalDeleteBordTitle}
+            content={modalDeleteBordContent}
             buttonCancel={
               <Button onClick={handleCloseModal} variant="contained">
-                Cancel
+                {buttonCancel}
               </Button>
             }
             buttonAgree={
               <ButtonWithPreloader
                 isLoading={isLoading}
                 onClick={confirmBoardDelete}
-                content={'Delete'}
+                content={buttonAgreeDelete}
               />
             }
           />

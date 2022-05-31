@@ -27,6 +27,8 @@ const BoardList = ({ createBoard }: BoardListProps) => {
     color: '#000000',
   }));
   const { boards, isFetching } = useTypedSelector((state) => state.main);
+  const { boardList } = useTypedSelector((state) => state.lang.phrases.main);
+  const { createBoardBtn } = useTypedSelector((state) => state.lang.phrases.global);
   const { getBoards } = useActions();
   const dispatch = useDispatch();
 
@@ -52,7 +54,7 @@ const BoardList = ({ createBoard }: BoardListProps) => {
     <>
       {boards ? (
         <>
-          <h2 className={classes.title}>Board List</h2>
+          <h2 className={classes.title}>{boardList}</h2>
           <Stack spacing={2} sx={{ position: 'relative' }}>
             {boards.map(({ id, title, description }) => (
               <Board className={classes.board} key={id}>
@@ -70,7 +72,7 @@ const BoardList = ({ createBoard }: BoardListProps) => {
             ))}
           </Stack>
           <button className={classes.button} onClick={createBoard}>
-            Create new board
+            {createBoardBtn}
           </button>
         </>
       ) : (

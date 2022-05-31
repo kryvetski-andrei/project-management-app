@@ -7,6 +7,10 @@ export interface ILanguagePhrases {
 interface IGlobalPhrases {
   login: string;
   signUp: string;
+  createBoardBtn: string;
+  modalCreateBordTitle: string;
+  buttonCancel: string;
+  buttonAgree: string;
 }
 
 interface IWelcomePhrases {
@@ -27,11 +31,19 @@ interface ILoginPhrases {
   registrText: string;
 }
 
+interface IMainPhrases {
+  boardList: string;
+  modalDeleteBordTitle: string;
+  modalDeleteBordContent: string;
+  buttonAgreeDelete: string;
+}
+
 export interface ILanguage {
   global: IGlobalPhrases;
   welcome: IWelcomePhrases;
   header: IHeaderPhrases;
   login: ILoginPhrases;
+  main: IMainPhrases;
 }
 
 export interface ILanguageState {

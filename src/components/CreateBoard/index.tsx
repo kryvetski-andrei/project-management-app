@@ -23,7 +23,9 @@ const CreateBoard = () => {
     id === 'title' && setboardData({ ...boardData, title: value.trim() });
     id === 'description' && setboardData({ ...boardData, description: value.trim() });
   };
-
+  const { modalCreateBordTitle, buttonCancel, buttonAgree } = useTypedSelector(
+    (state) => state.lang.phrases.global
+  );
   const handleCloseModal = () => {
     dispatch({
       type: 'SET_OPEN_MODAL',
@@ -52,10 +54,10 @@ const CreateBoard = () => {
     <Modal
       open={openModal}
       onClose={() => dispatch({ type: 'SET_OPEN_MODAL' })}
-      title={'Create a board'}
+      title={modalCreateBordTitle}
       buttonCancel={
         <Button onClick={handleCloseModal} variant="contained">
-          Cancel
+          {buttonCancel}
         </Button>
       }
       buttonAgree={
@@ -63,7 +65,7 @@ const CreateBoard = () => {
           isLoading={isLoading}
           onClick={validateForm}
           disabled={disable}
-          content={'Create'}
+          content={buttonAgree}
         />
       }
     >
