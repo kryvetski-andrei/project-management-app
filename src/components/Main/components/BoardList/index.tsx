@@ -3,11 +3,12 @@ import { Box, IconButton, Paper, Stack, styled, Typography } from '@mui/material
 import { Link } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import classes from './index.module.scss';
-import { useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { useEffect } from 'react';
 import EmptyBoardList from '../../../EmptyBoardList';
 import { useTypedSelector } from '../../../../hooks/useTypeSelector';
 import { useActions } from '../../../../hooks/useActions';
+import { useDispatch } from 'react-redux';
+import MyLinkButton from '../LinkButton';
 interface BoardListProps {
   isFetching: boolean;
   createBoard(): void;
@@ -29,7 +30,7 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
   }));
   const { boards } = useTypedSelector((state) => state.main);
   const { getBoards } = useActions();
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getBoards();
@@ -63,9 +64,7 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
               </Box>
               <Box className={classes.box}>
                 <Typography sx={{ color: '#4f4e4e' }}>{description}</Typography>
-                <Link to={'/board'} className={classes.link}>
-                  <ArrowRightAlt />
-                </Link>
+                <MyLinkButton id={id} />
               </Box>
             </Board>
           ))}
