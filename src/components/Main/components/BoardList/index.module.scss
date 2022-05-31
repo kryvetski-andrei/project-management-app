@@ -1,0 +1,31 @@
+.link {
+  align-self: flex-end;
+  height: 24px;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 8px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 50%;
+  }
+}
+
+.board:nth-child(4n+1) {
+  background: #e3e1e2;
+}
+
+.board:nth-child(4n+2) {
+  background-color: #c5f3e2;
+}
+.board:nth-child(4n+3) {
+  background-color: #ecf0c7;
+}
+
+.board:nth-child(4n+4) {
+  background-color: #f4d6f9;
+}
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

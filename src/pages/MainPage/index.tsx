@@ -1,9 +1,10 @@
 import React from 'react';
+import Main from '../../components/Main';
 
 const MainPage = () => {
   return (
-    <div>
-      <h2>Main Page</h2>
+    <div style={{ minHeight: '90vh' }}>
+      <Main />
     </div>
   );
 };
