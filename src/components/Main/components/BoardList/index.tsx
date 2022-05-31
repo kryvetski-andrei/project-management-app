@@ -3,11 +3,11 @@ import { Box, IconButton, Paper, Stack, styled, Typography } from '@mui/material
 import { Link } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import classes from './index.module.scss';
-import { useAppDispatch, useAppSelector } from '../../../../hooks/useAppDispatch';
-import { mainSlice } from '../../../../store/reducers/mainReducers';
+import { useAppDispatch } from '../../../../hooks/useAppDispatch';
 import { useEffect } from 'react';
-import { getBoards } from '../../../../utils/api/mainPageFetch/mainPageFetch';
 import EmptyBoardList from '../../../EmptyBoardList';
+import { useTypedSelector } from '../../../../hooks/useTypeSelector';
+import { useActions } from '../../../../hooks/useActions';
 interface BoardListProps {
   isFetching: boolean;
   createBoard(): void;
@@ -27,21 +27,28 @@ const BoardList = ({ isFetching, createBoard }: BoardListProps) => {
     ...theme.typography.h6,
     color: '#000000',
   }));
-  const { boards } = useAppSelector((state) => state.mainReducer);
-  const { setOpenModal, setActiveModal, setIdBoard } = mainSlice.actions;
+  const { boards } = useTypedSelector((state) => state.main);
+  const { getBoards } = useActions();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getBoards());
+    getBoards();
   }, [isFetching]);
 
   const handleClick = (e: React.UIEvent<HTMLButtonElement>) => {
-    dispatch(setOpenModal());
-    dispatch(setActiveModal('delete'));
     const id = e.currentTarget.id;
-    dispatch(setIdBoard(id));
+    dispatch({
+      type: 'SET_ID_BOARD',
+      payload: id,
+    });
+    dispatch({
+      type: 'SET_OPEN_MODAL',
+    });
+    dispatch({
+      type: 'SET_ACTIVE_MODAL',
+      payload: 'delete',
+    });
   };
-
   return (
     <>
       {boards ? (

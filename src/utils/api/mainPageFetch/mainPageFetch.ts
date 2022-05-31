@@ -1,49 +1,68 @@
-import { Board } from '../../types/MainPage.ts/index';
+import { MainAction, MainActionTypes, NewBoard } from '../../types/MainPage.ts/index';
+import { createAsyncThunk, Dispatch } from '@reduxjs/toolkit';
 
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI5MzU2MGZmMi05ZDkxLTRhMjItOTY4MS01MmU3ZmU0ZTI0OGQiLCJsb2dpbiI6InJvdXJvdSIsImlhdCI6MTY1MzA3NTc3MH0.4VdpFxDzaUEbYu2f_6ugt4mDCn628zu7mub790LFbJU';
-
-export const getBoards = async (setResult: React.Dispatch<React.SetStateAction<Board[]>>) => {
-  try {
-    const response = await fetch('https://kryvetski-rs-pma-be.herokuapp.com/boards', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const result = await response.json();
-    console.log(result);
-    setResult(result);
-  } catch (error) {
-    console.log(error);
-  }
+export const getBoards = () => {
+  return async (dispatch: Dispatch<MainAction>) => {
+    try {
+      dispatch({ type: MainActionTypes.GET_BOARDS });
+      const response = await fetch('https://kryvetski-be.herokuapp.com/boards', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Server Error!');
+      }
+      const result = await response.json();
+      dispatch({ type: MainActionTypes.GET_BOARDS_SUCCESS, payload: result });
+    } catch (error) {
+      if (error instanceof Error) {
+        dispatch({ type: MainActionTypes.GET_BOARDS_ERROR, payload: error.message });
+        return error.message;
+      }
+    }
+  };
 };
 
-export const setNewBoard = async (title: { [key: string]: string }) => {
+export const setNewBoard = async (board: NewBoard) => {
   try {
-    await fetch('https://kryvetski-rs-pma-be.herokuapp.com/boards', {
+    const response = await fetch('https://kryvetski-be.herokuapp.com/boards', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(title),
+      body: JSON.stringify(board),
     });
+    if (!response.ok) throw new Error(`${response.statusText}. Can't create board!`);
+    else {
+      const result = await response.json();
+      return result;
+    }
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      return error.message;
+    }
   }
 };
 
 export const deleteBoard = async (id: string) => {
   try {
-    await fetch(`https://kryvetski-rs-pma-be.herokuapp.com/boards/${id}`, {
+    const response = await fetch(`https://kryvetski-be.herokuapp.com/boards/${id}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     });
+    if (!response.ok) {
+      throw new Error(`${response.statusText}. Can't delete board!`);
+    }
+    return id;
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      return error.message;
+    }
   }
 };
