@@ -1,0 +1,54 @@
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 39px;
+}
+
+.link {
+  align-self: flex-end;
+  height: 24px;
+  color: rgba(0, 0, 0, 0.54);
+  padding: 8px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-radius: 50%;
+  }
+}
+
+.board:nth-child(4n+1) {
+  background: #e3e1e2;
+}
+
+.board:nth-child(4n+2) {
+  background-color: #c5f3e2;
+}
+.board:nth-child(4n+3) {
+  background-color: #ecf0c7;
+}
+
+.board:nth-child(4n+4) {
+  background-color: #f4d6f9;
+}
+
+.box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  margin: 10px 0;
+  width: 100%;
+  max-width: 1180px;
+  height: 77px;
+  padding: 0 15px;
+  font-size: 22px;
+  font-weight: 700;
+  background-color: #f5f2f2;
+  color: #3c3b3b;
+  border-radius: 10px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  outline: none;
+  cursor: pointer;
+}

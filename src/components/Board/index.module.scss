@@ -1,0 +1,36 @@
+.board {
+  display: flex;
+  gap: 10px;
+  height: calc(100vh - 122px);
+  padding: 15px;
+  overflow-x: scroll;
+
+  &::-webkit-scrollbar-track {
+    right: 0;
+    margin-bottom: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    height: 10px;
+    //background-color: #F5F5F5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #b6b6b6;
+  }
+}
+
+.addColumnButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 50px;
+  //background-color: #eceff1;
+  border-radius: 10px;
+  border: 1.5px dashed #9d9d9d;
+  padding-left: 10px;
+  box-sizing: border-box;
+  gap: 15px;
+}
