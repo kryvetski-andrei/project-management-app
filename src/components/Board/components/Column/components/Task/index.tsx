@@ -1,30 +1,19 @@
 import type { CSSProperties, FC } from 'react';
-import { memo, useState, useRef, useCallback, useEffect } from 'react';
-import { useDrag, useDrop } from 'react-dnd';
+import { useState, useCallback, useEffect } from 'react';
+import { useDrag } from 'react-dnd';
 import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
-import { batch, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import update from 'immutability-helper';
 import { BoardActionTypes } from '../../../../../../utils/types/Board';
 import { ItemTypes } from '../../../../../../utils/types/DnDItems';
 import { ITask } from '../../../../../../utils/types/Task';
-import styles from './index.module.scss';
 import { Box, Card, CardActionArea, CardContent, Typography } from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import IconButton from '@mui/material/IconButton';
 import * as React from 'react';
 import { TaskMenu } from './components/Menu';
-import { temporaryBoardIdPath } from '../../../../../../utils/api/config';
 
 const style: CSSProperties = {
-  // border: '1px dashed gray',
   cursor: 'grab',
 };
-
-// export interface Task {
-//   columnId: number;
-//   id: number;
-//   title: string;
-// }
 
 export interface TaskProps {
   columnId: string;
@@ -41,6 +30,7 @@ interface Item {
 
 export const Task: FC<TaskProps> = ({ columnId, id, title, description }) => {
   const { columns, loading, error, currentTask } = useTypedSelector((state) => state.board);
+  const { idBoard } = useTypedSelector((state) => state.main);
   const dispatch = useDispatch();
 
   const [grabbedTask, setGrabbedTask] = useState<{
@@ -140,26 +130,22 @@ export const Task: FC<TaskProps> = ({ columnId, id, title, description }) => {
     <div ref={(node) => drag(node)} style={{ ...style, opacity }}>
       <div ref={measuredRef}>
         <Card sx={{ maxWidth: 345 }}>
-          {/*<CardMedia*/}
-          {/*    component="img"*/}
-          {/*    height="140"*/}
-          {/*    image="/static/images/cards/contemplative-reptile.jpg"*/}
-          {/*    alt="green iguana"*/}
-          {/*/>*/}
           <CardContent>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography gutterBottom variant="h6" component="div">
                 {title}
               </Typography>
-              <TaskMenu boardId={temporaryBoardIdPath} columnId={columnId} taskId={id} />
+              <TaskMenu
+                boardId={idBoard === '' ? localStorage.getItem('idBoard')! : idBoard}
+                columnId={columnId}
+                taskId={id}
+              />
             </Box>
             <Typography variant="body2" color="text.secondary">
               {description}
             </Typography>
           </CardContent>
         </Card>
-        {/*{title}*/}
-        {/*<p>{description}</p>*/}
       </div>
     </div>
   );

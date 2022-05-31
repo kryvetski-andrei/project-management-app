@@ -1,14 +1,10 @@
 import { useEffect } from 'react';
-import { useDrop } from 'react-dnd';
 import { Column } from './components/Column';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
-import { ItemTypes } from '../../utils/types/DnDItems';
 import { fetchBoard } from '../../store/action-creators/board';
 import { useActions } from '../../hooks/useActions';
-import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../utils/api/config';
-import { Box, Button, CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import styles from './index.module.scss';
-import AddIcon from '@mui/icons-material/Add';
 import { ColumnModal } from './components/Modal';
 
 export const Board = () => {
@@ -17,15 +13,8 @@ export const Board = () => {
   const { fetchBoard } = useActions();
 
   useEffect(() => {
-    fetchBoard(idBoard);
+    fetchBoard(idBoard === '' ? localStorage.getItem('idBoard')! : idBoard);
   }, []);
-
-  // const [, drop] = useDrop(() => ({
-  //   accept: ItemTypes.COLUMN,
-  //   collect: (monitor) => ({
-  //     isDrop: monitor.didDrop(),
-  //   }),
-  // }));
 
   if (loading) {
     return (
@@ -48,10 +37,6 @@ export const Board = () => {
       ))}
       <Box>
         <ColumnModal />
-        {/*<Button className={styles.addColumnButton}>*/}
-        {/*  <AddIcon />*/}
-        {/*  Create Column*/}
-        {/*</Button>*/}
       </Box>
     </Box>
   );

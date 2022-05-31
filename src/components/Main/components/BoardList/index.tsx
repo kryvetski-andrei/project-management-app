@@ -49,6 +49,8 @@ const BoardList = ({ createBoard }: BoardListProps) => {
       type: 'SET_ACTIVE_MODAL',
       payload: 'delete',
     });
+
+    localStorage.setItem('idBoard', id);
   };
   return (
     <>

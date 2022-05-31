@@ -1,4 +1,4 @@
-import { Container, Typography } from '@mui/material';
+import { Container, Link, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import { ReactElement } from 'react';
 import DeveloperCard from '../../components/DeveloperCard';
@@ -11,7 +11,7 @@ const WelcomePage = (): ReactElement => {
   const phrases = useTypedSelector((state) => state.lang.phrases.welcome);
 
   return (
-    <Container maxWidth="md" sx={{ padding: '2rem 0' }}>
+    <Container maxWidth="md" sx={{ padding: '2rem 0', minHeight: 'calc(100vh - 122px)' }}>
       <div className={styles['project-info']}>
         <Typography
           variant="h3"
@@ -24,24 +24,6 @@ const WelcomePage = (): ReactElement => {
           {phrases.pmaDesc}
         </Typography>
       </div>
-      <div className={styles['presentation']}>
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{ fontFamily: 'Pavanam', marginBottom: '.875rem' }}
-        >
-          {phrases.presentation}
-        </Typography>
-        <div className={styles['presentation__video']}>
-          <iframe
-            width="100%"
-            height="100%"
-            src={presentationSrc}
-            title="Presentation video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          ></iframe>
-        </div>
-      </div>
       <div>
         <Typography
           variant="h4"
@@ -51,21 +33,27 @@ const WelcomePage = (): ReactElement => {
           {phrases.developers}
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-          <DeveloperCard
-            image="/images/ekaterina.jpg"
-            name={phrases.developersInfo[0].name}
-            description={phrases.developersInfo[0].desc}
-          />
-          <DeveloperCard
-            image="/images/denis.jpg"
-            name={phrases.developersInfo[1].name}
-            description={phrases.developersInfo[1].desc}
-          />
-          <DeveloperCard
-            image="/images/andrei.jpg"
-            name={phrases.developersInfo[2].name}
-            description={phrases.developersInfo[2].desc}
-          />
+          <Link href="http://github.com/kate0305">
+            <DeveloperCard
+              image="/images/ekaterina.jpg"
+              name={phrases.developersInfo[0].name}
+              description={phrases.developersInfo[0].desc}
+            />
+          </Link>
+          <Link href="https://github.com/SavitskiDenis">
+            <DeveloperCard
+              image="/images/denis.jpg"
+              name={phrases.developersInfo[1].name}
+              description={phrases.developersInfo[1].desc}
+            />
+          </Link>
+          <Link href="https://github.com/kryvetski-andrei">
+            <DeveloperCard
+              image="/images/andrei.jpg"
+              name={phrases.developersInfo[2].name}
+              description={phrases.developersInfo[2].desc}
+            />
+          </Link>
         </Box>
       </div>
     </Container>

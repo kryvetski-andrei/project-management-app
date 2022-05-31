@@ -24,9 +24,9 @@ function BoardTools(props: IBoardToolsProps): ReactElement {
       <button className={props.btnClass} onClick={props.onCreateBoard}>
         {createBoardBtn}
       </button>
-      <Box sx={{ width: '30%', marginLeft: '.5rem' }}>
-        <SearchField dark={props.dark} />
-      </Box>
+      {/*<Box sx={{ width: '30%', marginLeft: '.5rem' }}>*/}
+      {/*  <SearchField dark={props.dark} />*/}
+      {/*</Box>*/}
     </Box>
   );
 }
