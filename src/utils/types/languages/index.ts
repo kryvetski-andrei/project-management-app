@@ -38,12 +38,23 @@ interface IMainPhrases {
   buttonAgreeDelete: string;
 }
 
+interface IBoardPhrases {
+  createColumn: string;
+  addTask: string;
+  delete: string;
+  deleteThisTask: string;
+  deleteThisColumn: string;
+  editTask: string;
+  confirmationText: string;
+}
+
 export interface ILanguage {
   global: IGlobalPhrases;
   welcome: IWelcomePhrases;
   header: IHeaderPhrases;
   login: ILoginPhrases;
   main: IMainPhrases;
+  board: IBoardPhrases;
 }
 
 export interface ILanguageState {

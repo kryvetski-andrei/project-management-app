@@ -9,7 +9,6 @@ import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { BASE_URL } from '../../../../utils/api/config';
 import update from 'immutability-helper';
-import { useActions } from '../../../../hooks/useActions';
 import { useTypedSelector } from '../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import { BoardActionTypes } from '../../../../utils/types/Board';
@@ -36,6 +35,15 @@ export const ColumnModal = () => {
   const { columns } = useTypedSelector((state) => state.board);
   const { token, userId } = useTypedSelector((state) => state.auth);
   const { idBoard } = useTypedSelector((state) => state.main);
+  const {
+    delete: deleteSome,
+    addTask,
+    createColumn,
+    confirmationText,
+    deleteThisColumn,
+    deleteThisTask,
+    editTask,
+  } = useTypedSelector((state) => state.lang.phrases.board);
   const dispatch = useDispatch();
 
   const [open, setOpen] = React.useState(false);
@@ -90,7 +98,7 @@ export const ColumnModal = () => {
     <div>
       <Button onClick={handleOpen} className={styles.addColumnButton}>
         <AddIcon />
-        Create Column
+        {createColumn}
       </Button>
       <Modal
         open={open}
@@ -100,7 +108,7 @@ export const ColumnModal = () => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Create Column
+            {createColumn}
           </Typography>
 
           <Box
@@ -129,7 +137,7 @@ export const ColumnModal = () => {
               startIcon={<SaveIcon />}
               variant="contained"
             >
-              Create Column
+              {createColumn}
             </LoadingButton>
           </Box>
         </Box>

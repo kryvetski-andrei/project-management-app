@@ -75,6 +75,14 @@ interface TaskMenuProps {
 }
 
 export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
+  const {
+    delete: deleteSome,
+    addTask,
+    confirmationText,
+    deleteThisColumn,
+    deleteThisTask,
+    editTask,
+  } = useTypedSelector((state) => state.lang.phrases.board);
   const { columns } = useTypedSelector((state) => state.board);
   const { token, userId } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -148,12 +156,12 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
       >
         <MenuItem onClick={handleClose} disableRipple>
           <EditIcon />
-          Edit Task
+          {editTask}
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleOpenModal} disableRipple color="warning" sx={{ color: 'red' }}>
           <DeleteOutlineIcon sx={{ color: 'red' }} />
-          Delete
+          {deleteSome}
         </MenuItem>
       </StyledMenu>
 
@@ -165,7 +173,7 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            If you understand the consequences...
+            {confirmationText}
           </Typography>
 
           <Box
@@ -182,7 +190,7 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
               startIcon={<DeleteOutlineIcon />}
               variant="contained"
             >
-              Delete this Task
+              {deleteThisTask}
             </LoadingButton>
           </Box>
         </Box>

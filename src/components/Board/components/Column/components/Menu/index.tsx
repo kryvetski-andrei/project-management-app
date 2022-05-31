@@ -77,6 +77,12 @@ interface ColumnMenuProps {
 }
 
 export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
+  const {
+    delete: deleteSome,
+    addTask,
+    confirmationText,
+    deleteThisColumn,
+  } = useTypedSelector((state) => state.lang.phrases.board);
   const { columns } = useTypedSelector((state) => state.board);
   const { idBoard } = useTypedSelector((state) => state.main);
   const { token, userId } = useTypedSelector((state) => state.auth);
@@ -197,7 +203,7 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
       >
         <MenuItem onClick={handleOpenCreateTaskModal} disableRipple>
           <AddIcon fontSize="large" />
-          Add Task
+          {addTask}
         </MenuItem>
         <Divider />
         <MenuItem
@@ -207,7 +213,7 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
           sx={{ color: 'red' }}
         >
           <DeleteOutlineIcon sx={{ color: 'red' }} />
-          Delete
+          {deleteSome}
         </MenuItem>
       </StyledMenu>
       <Modal
@@ -219,7 +225,7 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
         {confirmation ? (
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              If you understand the consequences...
+              {confirmationText}
             </Typography>
 
             <Box
@@ -236,14 +242,14 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
                 startIcon={<DeleteOutlineIcon />}
                 variant="contained"
               >
-                Delete this Column
+                {deleteThisColumn}
               </LoadingButton>
             </Box>
           </Box>
         ) : (
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">
-              Create new task
+              {addTask}
             </Typography>
 
             <Box
@@ -279,7 +285,7 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
                 startIcon={<AddIcon />}
                 variant="contained"
               >
-                Add this task
+                {addTask}
               </LoadingButton>
             </Box>
           </Box>
