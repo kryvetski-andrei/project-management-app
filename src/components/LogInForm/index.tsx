@@ -3,6 +3,7 @@ import { ReactElement, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { getUserIdFromToken } from '../../store/reducers/authReducer';
 import { signin } from '../../utils/api/authorization';
 import { objIsIApiError } from '../../utils/types/api';
@@ -14,6 +15,8 @@ function LogInForm(): ReactElement {
     show: false,
     msg: '',
   });
+  const { login } = useTypedSelector((state) => state.lang.phrases.global);
+  const { registrText } = useTypedSelector((state) => state.lang.phrases.login);
 
   const {
     handleSubmit,
@@ -66,10 +69,10 @@ function LogInForm(): ReactElement {
         helperText={errors['password']?.message}
       />
       <Button type="submit" color="success" variant="contained" sx={{ marginBottom: '1rem' }}>
-        Log in
+        {login}
       </Button>
       <Link href="/signup" underline="hover">
-        Don&apos;t have an account? Sign up
+        {registrText}
       </Link>
       <Snackbar
         open={error.show}

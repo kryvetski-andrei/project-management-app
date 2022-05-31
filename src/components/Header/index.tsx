@@ -8,11 +8,6 @@ import styles from './index.module.scss';
 import LanguageMenu from './LanguagesMenu';
 import Profile from './Profile';
 
-const links = [
-  { text: 'Sign up', path: pagesPath.signupPagePath },
-  { text: 'Log in', path: pagesPath.loginPagePath },
-];
-
 interface Props {
   window?: () => Window;
   children: React.ReactElement;
@@ -34,6 +29,8 @@ function ElevationScroll(props: Props) {
 
 function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElement {
   const token = useTypedSelector((state) => state.auth.token);
+  const { login, signUp } = useTypedSelector((state) => state.lang.phrases.global);
+  const { toMain } = useTypedSelector((state) => state.lang.phrases.header);
   const location = useLocation();
   return (
     <AppBar
@@ -74,7 +71,7 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
                     key="go to main"
                     to="/"
                   >
-                    Go to main
+                    {toMain}
                   </NavLink>
                 ) : (
                   ''
@@ -83,21 +80,28 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
                 <Profile />
               </>
             ) : (
-              links.map(({ text, path }) => (
+              <>
                 <NavLink
                   className={({ isActive }) => {
                     return [isActive ? 'active' : '', styles['header__btn']].join(' ');
                   }}
-                  key={text}
-                  to={path}
+                  to={pagesPath.signupPagePath}
                 >
-                  {text}
+                  {signUp}
                 </NavLink>
-              ))
+                <NavLink
+                  className={({ isActive }) => {
+                    return [isActive ? 'active' : '', styles['header__btn']].join(' ');
+                  }}
+                  to={pagesPath.loginPagePath}
+                >
+                  {login}
+                </NavLink>
+              </>
             )}
           </Box>
         </Box>
-        {location.pathname === pagesPath.boardPagePath ? (
+        {/* {location.pathname === pagesPath.mainPagePath ? (
           <BoardTools
             btnClass={styles['header__btn']}
             dark={props.dark === 1}
@@ -105,7 +109,7 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
           />
         ) : (
           ''
-        )}
+        )} */}
       </Container>
     </AppBar>
   );
