@@ -27,7 +27,7 @@ const EditProfile = () => {
     const userId = localStorage.getItem('userId');
     userId && dispatch(setUserId(userId));
     userId && dispatch(getUser(userId));
-  }, []); //вынести в другой компонент, чтобы при загрузке сразу были данные
+  }, []);
 
   const [values, setValues] = useState<UserUpdate>({
     name: user.name,
