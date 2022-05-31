@@ -1,5 +1,9 @@
-.footer__link {
-  color: white !important;
+.footer {
+  justify-content: center;
+  align-items: center;
 
-  cursor: pointer;
+  display: flex;
+  height: 4rem;
+
+  background-color: #171717;
 }

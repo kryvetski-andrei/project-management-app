@@ -3,10 +3,12 @@ import { ReactElement, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { pagesPath } from '../../../utils/config';
+import { useTypedSelector } from '../../../hooks/useTypeSelector';
 import { AuthActionTypes, TOKEN_STORAGE_NAME } from '../../../utils/types/authorization';
 
 function Profile(): ReactElement {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const phrases = useTypedSelector((state) => state.lang.phrases.header);
   const dispatch = useDispatch();
   const navigation = useNavigate();
 
@@ -51,9 +53,9 @@ function Profile(): ReactElement {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={goToEditProfile}>Edit profile</MenuItem>
+        <MenuItem onClick={goToEditProfile}>{phrases.editProfile}</MenuItem>
         <Divider />
-        <MenuItem onClick={signout}>Sign out</MenuItem>
+        <MenuItem onClick={signout}>{phrases.signOut}</MenuItem>
       </Menu>
     </>
   );
