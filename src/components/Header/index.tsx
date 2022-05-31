@@ -1,8 +1,10 @@
 import { AppBar, Box, Container, useScrollTrigger } from '@mui/material';
-import { cloneElement, ReactElement } from 'react';
+import { cloneElement, ReactElement, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { pagesPath } from '../../utils/config';
+import CreateBoard from '../CreateBoard';
 import BoardTools from './BoardTools';
 import styles from './index.module.scss';
 import LanguageMenu from './LanguagesMenu';
@@ -32,6 +34,24 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
   const { login, signUp } = useTypedSelector((state) => state.lang.phrases.global);
   const { toMain } = useTypedSelector((state) => state.lang.phrases.header);
   const location = useLocation();
+  const dispatch = useDispatch();
+  const { activeModal } = useTypedSelector((state) => state.main);
+  const [, setDisable] = useState<boolean>(true);
+  const handleCloseModal = () => {
+    dispatch({
+      type: 'SET_OPEN_MODAL',
+    });
+    setDisable(true);
+  };
+
+  const handleClik = () => {
+    handleCloseModal();
+    dispatch({
+      type: 'SET_ACTIVE_MODAL',
+      payload: 'create',
+    });
+  };
+
   return (
     <AppBar
       elevation={1}
@@ -101,15 +121,16 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
             )}
           </Box>
         </Box>
-        {/* {location.pathname === pagesPath.mainPagePath ? (
+        {location.pathname === pagesPath.mainPagePath ? (
           <BoardTools
             btnClass={styles['header__btn']}
             dark={props.dark === 1}
-            onCreateBoard={props.onCreateBoard}
+            onCreateBoard={handleClik}
           />
         ) : (
           ''
-        )} */}
+        )}
+        {activeModal === 'create' && <CreateBoard />}
       </Container>
     </AppBar>
   );

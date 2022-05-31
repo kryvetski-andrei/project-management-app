@@ -1,5 +1,5 @@
 import { MainAction, MainActionTypes, NewBoard } from '../../types/MainPage.ts/index';
-import { createAsyncThunk, Dispatch } from '@reduxjs/toolkit';
+import { Dispatch } from '@reduxjs/toolkit';
 
 export const getBoards = () => {
   return async (dispatch: Dispatch<MainAction>) => {

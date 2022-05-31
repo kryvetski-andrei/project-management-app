@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { MainAction, MainActionTypes, NewBoard } from '../../utils/types/MainPage.ts';
+import { BoardItem, MainAction, MainActionTypes, NewBoard } from '../../utils/types/MainPage.ts';
 
 export const setNewBoard = (board: NewBoard) => {
   return async (dispatch: Dispatch<MainAction>) => {
@@ -15,8 +15,8 @@ export const setNewBoard = (board: NewBoard) => {
       });
       if (!response.ok) throw new Error(`${response.statusText}. Can't create board!`);
       else {
-        const result = await response.json();
-        dispatch({ type: MainActionTypes.SET_NEW_BOARD_SUCCESS });
+        const result: BoardItem = await response.json();
+        dispatch({ type: MainActionTypes.SET_NEW_BOARD_SUCCESS, payload: result });
       }
     } catch (error) {
       if (error instanceof Error) {

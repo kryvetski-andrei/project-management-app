@@ -1,6 +1,7 @@
 import { Box } from '@mui/material';
 import { ReactElement } from 'react';
 import SearchField from '../SearchField';
+import { useTypedSelector } from '../../../hooks/useTypeSelector';
 
 interface IBoardToolsProps {
   dark?: boolean;
@@ -9,6 +10,7 @@ interface IBoardToolsProps {
 }
 
 function BoardTools(props: IBoardToolsProps): ReactElement {
+  const { createBoardBtn } = useTypedSelector((state) => state.lang.phrases.global);
   return (
     <Box
       sx={{
@@ -20,7 +22,7 @@ function BoardTools(props: IBoardToolsProps): ReactElement {
       }}
     >
       <button className={props.btnClass} onClick={props.onCreateBoard}>
-        Create board
+        {createBoardBtn}
       </button>
       <Box sx={{ width: '30%', marginLeft: '.5rem' }}>
         <SearchField dark={props.dark} />
