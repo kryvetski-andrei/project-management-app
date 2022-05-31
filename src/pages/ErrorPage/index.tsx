@@ -1,9 +1,13 @@
-import React from 'react';
+import { Stack, Typography } from '@mui/material';
+import classes from './index.module.scss';
 
 const ErrorPage = () => {
   return (
-    <div>
-      <h2>Error Page</h2>
+    <div className={classes.wrapper}>
+      <Stack spacing={4}>
+        <Typography variant="h1">404</Typography>
+        <Typography variant="h2">This Page Not Found!</Typography>
+      </Stack>
     </div>
   );
 };

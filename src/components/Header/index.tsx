@@ -35,7 +35,6 @@ function ElevationScroll(props: Props) {
 function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElement {
   const token = useTypedSelector((state) => state.auth.token);
   const location = useLocation();
-
   return (
     <AppBar
       elevation={1}

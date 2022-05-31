@@ -1,0 +1,22 @@
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 39px;
+}
+
+.button {
+  margin: 10px 0;
+  width: 100%;
+  max-width: 1180px;
+  height: 77px;
+  padding: 0 15px;
+  font-family: 'Roboto';
+  font-size: 18px;
+  font-weight: 500;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px dashed rgba(0, 0, 0, 0.2);
+  outline: none;
+  cursor: pointer;
+}

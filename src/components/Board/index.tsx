@@ -13,10 +13,11 @@ import { ColumnModal } from './components/Modal';
 
 export const Board = () => {
   const { columns, loading, error } = useTypedSelector((state) => state.board);
+  const { idBoard } = useTypedSelector((state) => state.main);
   const { fetchBoard } = useActions();
 
   useEffect(() => {
-    fetchBoard(temporaryBoardIdPath);
+    fetchBoard(idBoard);
   }, []);
 
   // const [, drop] = useDrop(() => ({
