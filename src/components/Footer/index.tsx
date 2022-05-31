@@ -1,5 +1,6 @@
-import { Avatar, BottomNavigation, Container, Link } from '@mui/material';
+import { Avatar, Container, Link } from '@mui/material';
 import { ReactElement } from 'react';
+import styles from './index.module.scss';
 
 const linkStyles = {
   color: 'white',
@@ -13,11 +14,7 @@ const linkImgStyles = {
 
 function Footer(): ReactElement {
   return (
-    <BottomNavigation
-      sx={{ backgroundColor: '#171717', height: '4rem' }}
-      component="footer"
-      showLabels={false}
-    >
+    <footer className={styles['footer']}>
       <Container
         maxWidth="xl"
         sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
@@ -36,7 +33,7 @@ function Footer(): ReactElement {
           <Avatar src="/images/github.png" alt="rs school" variant="square" sx={linkImgStyles} />
         </Link>
       </Container>
-    </BottomNavigation>
+    </footer>
   );
 }
 

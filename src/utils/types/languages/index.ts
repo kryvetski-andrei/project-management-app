@@ -1,7 +1,54 @@
 export const LANG_STORAGE_NAME = 'lang';
 
+export interface ILanguagePhrases {
+  [name: string]: string;
+}
+
+interface IGlobalPhrases {
+  login: string;
+  signUp: string;
+  createBoardBtn: string;
+  modalCreateBordTitle: string;
+  buttonCancel: string;
+  buttonAgree: string;
+}
+
+interface IWelcomePhrases {
+  pma: string;
+  pmaDesc: string;
+  presentation: string;
+  developers: string;
+  developersInfo: ILanguagePhrases[];
+}
+
+interface IHeaderPhrases {
+  toMain: string;
+  editProfile: string;
+  signOut: string;
+}
+
+interface ILoginPhrases {
+  registrText: string;
+}
+
+interface IMainPhrases {
+  boardList: string;
+  modalDeleteBordTitle: string;
+  modalDeleteBordContent: string;
+  buttonAgreeDelete: string;
+}
+
+export interface ILanguage {
+  global: IGlobalPhrases;
+  welcome: IWelcomePhrases;
+  header: IHeaderPhrases;
+  login: ILoginPhrases;
+  main: IMainPhrases;
+}
+
 export interface ILanguageState {
   current: string | null;
+  phrases: ILanguage;
 }
 
 export enum LanguageActionTypes {

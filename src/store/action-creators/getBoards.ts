@@ -1,5 +1,6 @@
 import { Dispatch } from 'redux';
 import { MainAction, MainActionTypes } from '../../utils/types/MainPage.ts';
+import { Board } from '../../utils/types/MainPage.ts';
 
 export const getBoards = () => {
   return async (dispatch: Dispatch<MainAction>) => {
@@ -15,7 +16,7 @@ export const getBoards = () => {
       if (!response.ok) {
         throw new Error('Server Error!');
       }
-      const result = await response.json();
+      const result: Board[] = await response.json();
       dispatch({ type: MainActionTypes.GET_BOARDS_SUCCESS, payload: result });
     } catch (error) {
       if (error instanceof Error) {

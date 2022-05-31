@@ -8,6 +8,7 @@ export const defaultState: MainReducersState = {
   activeModal: '',
   status: null,
   error: null,
+  isFetching: false,
 };
 
 export const mainReducer = (state = defaultState, action: MainAction): MainReducersState => {
@@ -19,21 +20,32 @@ export const mainReducer = (state = defaultState, action: MainAction): MainReduc
     case MainActionTypes.SET_ACTIVE_MODAL:
       return { ...state, activeModal: action.payload };
     case MainActionTypes.GET_BOARDS:
-      return { ...state, isLoading: true, error: null, status: null };
+      return { ...state, isLoading: true, isFetching: true, error: null, status: null };
     case MainActionTypes.GET_BOARDS_SUCCESS:
-      return { ...state, isLoading: false, boards: action.payload };
+      return { ...state, isLoading: false, isFetching: false, boards: action.payload };
     case MainActionTypes.GET_BOARDS_ERROR:
-      return { ...state, isLoading: false, error: action.payload };
+      return { ...state, isLoading: false, isFetching: false, error: action.payload };
     case MainActionTypes.SET_BOARDS:
       return { ...state, isLoading: true, error: null, status: null };
     case MainActionTypes.SET_NEW_BOARD_SUCCESS:
-      return { ...state, isLoading: false, status: 'Board created' };
+      return {
+        ...state,
+        isLoading: false,
+        status: 'Board created',
+        isFetching: false,
+        boards: [...state.boards, action.payload],
+      };
     case MainActionTypes.SET_NEW_BOARD_ERROR:
       return { ...state, isLoading: false, error: action.payload };
     case MainActionTypes.DELETE_BOARDS:
       return { ...state, isLoading: true, error: null, status: null };
     case MainActionTypes.DELETE_BOARD_SUCCESS:
-      return { ...state, status: 'Board deleted' };
+      return {
+        ...state,
+        isLoading: false,
+        status: 'Board deleted',
+        boards: state.boards.filter((board) => board.id !== action.payload),
+      };
     case MainActionTypes.DELETE_BOARD_ERROR:
       return { ...state, isLoading: false, error: action.payload };
     default:

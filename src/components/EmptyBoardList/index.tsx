@@ -1,5 +1,5 @@
 import { Container } from '@mui/material';
-import classes from './index.moddule.scss';
+import classes from './index.module.scss';
 
 interface EmptyBoardListProps {
   onClick(): void;

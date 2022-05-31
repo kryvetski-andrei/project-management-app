@@ -2,6 +2,7 @@ import { Alert, Button, Snackbar, TextField } from '@mui/material';
 import { ReactElement, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useTypedSelector } from '../../hooks/useTypeSelector';
 import { signup } from '../../utils/api/authorization';
 import { objIsIApiError } from '../../utils/types/api';
 import styles from './index.module.scss';
@@ -17,6 +18,7 @@ function SignUpForm(): ReactElement {
     register,
     formState: { errors },
   } = useForm({ mode: 'onSubmit' });
+  const { signUp } = useTypedSelector((state) => state.lang.phrases.global);
 
   const navigate = useNavigate();
 
@@ -69,7 +71,7 @@ function SignUpForm(): ReactElement {
         helperText={errors['password']?.message}
       />
       <Button type="submit" color="success" variant="contained">
-        Sign up
+        {signUp}
       </Button>
       <Snackbar
         open={error.show}

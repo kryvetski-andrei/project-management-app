@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const MyLinkButton = ({ id }: { id: string }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handlerClick = (e: React.UIEvent<HTMLButtonElement>) => {
+  const handlerClick = () => {
     navigate('/board');
     dispatch({
       type: 'SET_ID_BOARD',
