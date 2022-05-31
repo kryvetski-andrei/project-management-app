@@ -1,6 +1,4 @@
-import { ArrowRightAlt } from '@mui/icons-material';
 import { Box, IconButton, Paper, Stack, styled, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import ClearIcon from '@mui/icons-material/Clear';
 import classes from './index.module.scss';
 import { useEffect } from 'react';

@@ -41,14 +41,6 @@ const Main = () => {
     });
   };
 
-  const createBoard = () => {
-    setOpen(true);
-    setNewBoard(boardData);
-    setboardData({ title: '', description: '' });
-    setIsFetching(!isFetching);
-    !isLoading && handleCloseModal();
-  };
-
   const confirmBoardDelete = async () => {
     setOpen(true);
     deleteBoard(idBoard);
