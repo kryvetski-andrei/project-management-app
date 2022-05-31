@@ -1,7 +1,24 @@
 .board {
   display: flex;
   gap: 10px;
-  height: 90vh;
+  height: calc(100vh - 122px);
+  padding: 15px;
+  overflow-x: scroll;
+
+  &::-webkit-scrollbar-track {
+    right: 0;
+    margin-bottom: 10px;
+  }
+
+  &::-webkit-scrollbar {
+    height: 10px;
+    //background-color: #F5F5F5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #b6b6b6;
+  }
 }
 
 .addColumnButton {

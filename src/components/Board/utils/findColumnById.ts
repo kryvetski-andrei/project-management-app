@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { IColumn } from '../../../utils/types/Column';
 
 export const findColumnById = (columns: IColumn[], id: string) => {

@@ -11,7 +11,7 @@ export const fetchBoard = (boardId: string) => {
       const response = await fetch(`${BASE_URL}/boards/${boardId}/columns`, {
         method: 'GET',
         headers: {
-          Authorization: `Bearer ${temporaryToken}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
@@ -23,7 +23,7 @@ export const fetchBoard = (boardId: string) => {
           const response = await fetch(`${BASE_URL}/boards/${boardId}/columns/${column.id}`, {
             method: 'GET',
             headers: {
-              Authorization: `Bearer ${temporaryToken}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               Accept: 'application/json',
               'Content-Type': 'application/json',
               'Access-Control-Allow-Origin': '*',

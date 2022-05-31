@@ -14,7 +14,7 @@
   margin-top: 10px;
   padding: 0 5px;
   overflow-y: scroll;
-  height: calc(100% - 118px);;
+  height: calc(100% - 60px);;
   position: relative;
   background-color: #eceff1;
   border-radius: 10px;
@@ -26,7 +26,7 @@
 
   &::-webkit-scrollbar {
     width: 3px;
-    //background-color: #F5F5F5;
+    background-color: #F5F5F5;
   }
 
   &::-webkit-scrollbar-thumb {

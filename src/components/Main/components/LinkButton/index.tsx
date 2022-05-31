@@ -12,6 +12,7 @@ const MyLinkButton = ({ id }: { id: string }) => {
       type: 'SET_ID_BOARD',
       payload: id,
     });
+    localStorage.setItem('idBoard', id);
   };
   return (
     <IconButton onClick={handlerClick}>

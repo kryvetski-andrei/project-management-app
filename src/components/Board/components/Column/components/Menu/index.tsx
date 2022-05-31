@@ -7,17 +7,8 @@ import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import EditIcon from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import {
-  BASE_URL,
-  temporaryBoardIdPath,
-  temporaryToken,
-  temporaryUserId,
-} from '../../../../../../utils/api/config';
+import { BASE_URL } from '../../../../../../utils/api/config';
 import { FC } from 'react';
 import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
@@ -28,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Modal from '@mui/material/Modal';
+import { BoardActionTypes } from '../../../../../../utils/types/Board';
 
 const style = {
   position: 'absolute' as const,
@@ -86,6 +78,8 @@ interface ColumnMenuProps {
 
 export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
   const { columns } = useTypedSelector((state) => state.board);
+  const { idBoard } = useTypedSelector((state) => state.main);
+  const { token, userId } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [openModal, setOpenModal] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -102,31 +96,30 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `${BASE_URL}/boards/${temporaryBoardIdPath}/columns/${columnId}/tasks`,
+        `${BASE_URL}/boards/${
+          idBoard === '' ? localStorage.getItem('idBoard')! : idBoard
+        }/columns/${columnId}/tasks`,
         {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${temporaryToken}`,
+            Authorization: `Bearer ${token}`,
             Accept: 'application/json',
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             title: taskTitleValue,
             description: taskDescriptionValue,
-            userId: temporaryUserId,
+            userId: userId,
           }),
         }
       );
       const task = await response.json();
-      console.log(task);
-      console.log(columns);
       const { index } = findColumnById(columns, columnId);
 
       dispatch({
-        type: 'UPDATE_COLUMNS',
+        type: BoardActionTypes.UPDATE_COLUMNS,
         payload: update(columns, {
           [index]: { tasks: { $splice: [[0, 0, task]] } },
-          //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
         }),
       });
       setLoading(false);
@@ -171,14 +164,14 @@ export const ColumnMenu: FC<ColumnMenuProps> = ({ boardId, columnId }) => {
       await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
         method: 'DELETE',
         headers: {
-          Authorization: `Bearer ${temporaryToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
       const { index } = findColumnById(columns, columnId);
 
       dispatch({
-        type: 'UPDATE_COLUMNS',
+        type: BoardActionTypes.UPDATE_COLUMNS,
         payload: update(columns, {
           $splice: [[index, 1]],
         }),

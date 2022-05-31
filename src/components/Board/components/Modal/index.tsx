@@ -7,12 +7,12 @@ import styles from '../../index.module.scss';
 import AddIcon from '@mui/icons-material/Add';
 import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { BASE_URL, temporaryBoardIdPath, temporaryToken } from '../../../../utils/api/config';
-import { ChangeEventHandler } from 'react';
+import { BASE_URL } from '../../../../utils/api/config';
 import update from 'immutability-helper';
 import { useActions } from '../../../../hooks/useActions';
 import { useTypedSelector } from '../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
+import { BoardActionTypes } from '../../../../utils/types/Board';
 
 const style = {
   position: 'absolute' as const,
@@ -34,6 +34,8 @@ function SaveIcon() {
 
 export const ColumnModal = () => {
   const { columns } = useTypedSelector((state) => state.board);
+  const { token, userId } = useTypedSelector((state) => state.auth);
+  const { idBoard } = useTypedSelector((state) => state.main);
   const dispatch = useDispatch();
 
   const [open, setOpen] = React.useState(false);
@@ -41,7 +43,6 @@ export const ColumnModal = () => {
   const handleClose = () => setOpen(false);
   const [loading, setLoading] = React.useState(false);
   const [value, setValue] = React.useState('');
-  const { fetchBoard } = useActions();
 
   const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -49,17 +50,20 @@ export const ColumnModal = () => {
   const handleClick = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${BASE_URL}/boards/${temporaryBoardIdPath}/columns`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${temporaryToken}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: value,
-        }),
-      });
+      const response = await fetch(
+        `${BASE_URL}/boards/${idBoard === '' ? localStorage.getItem('idBoard')! : idBoard}/columns`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: value,
+          }),
+        }
+      );
       const column = await response.json();
       const updatedColumn = {
         id: column.id,
@@ -68,7 +72,7 @@ export const ColumnModal = () => {
         tasks: [],
       };
       dispatch({
-        type: 'UPDATE_COLUMNS',
+        type: BoardActionTypes.UPDATE_COLUMNS,
         payload: update(columns, {
           $splice: [[columns.length, 0, updatedColumn]],
         }),

@@ -1,25 +1,14 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { ITask } from '../../../../../../../../utils/types/Task';
-import {
-  BASE_URL,
-  temporaryBoardIdPath,
-  temporaryToken,
-} from '../../../../../../../../utils/api/config';
+import { BASE_URL } from '../../../../../../../../utils/api/config';
 import { FC, useCallback } from 'react';
-import { ColumnProps } from '../../../../index';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -27,7 +16,7 @@ import Modal from '@mui/material/Modal';
 import update from 'immutability-helper';
 import { useTypedSelector } from '../../../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
-import { findColumnById } from '../../../../../../utils/findColumnById';
+import { BoardActionTypes } from '../../../../../../../../utils/types/Board';
 
 const style = {
   position: 'absolute' as const,
@@ -87,6 +76,7 @@ interface TaskMenuProps {
 
 export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
   const { columns } = useTypedSelector((state) => state.board);
+  const { token, userId } = useTypedSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -128,33 +118,23 @@ export const TaskMenu: FC<TaskMenuProps> = ({ boardId, columnId, taskId }) => {
     await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
-        Authorization: `Bearer ${temporaryToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
     const { columnIndex, taskIndex } = findTask(taskId, columnId);
 
     dispatch({
-      type: 'UPDATE_COLUMNS',
+      type: BoardActionTypes.UPDATE_COLUMNS,
       payload: update(columns, {
         [columnIndex]: { tasks: { $splice: [[taskIndex, 1]] } },
-        //TODO change dropZoneId to dropZoneOrder or dropZoneIndex
       }),
     });
   };
 
   return (
     <div>
-      <IconButton
-        // aria-label="delete"
-        // id="demo-customized-button"
-        // aria-controls={open ? 'demo-customized-menu' : undefined}
-        // aria-haspopup="true"
-        // aria-expanded={open ? 'true' : undefined}
-        // // variant="contained"
-        // disableElevation
-        onClick={handleClick}
-      >
+      <IconButton onClick={handleClick}>
         <MoreHorizIcon />
       </IconButton>
       <StyledMenu
