@@ -9,13 +9,17 @@ import { useDispatch } from 'react-redux';
 import { BoardActionTypes } from '../../utils/types/Board';
 import update from 'immutability-helper';
 import ApiService from '../../utils/api/responses/board';
+import AddColumnButton from './components/BeautifulColumn/AddColumnButton';
 
 interface ContainerProps {
   isDraggingOver: boolean;
 }
 
-const Container = styled('div')<ContainerProps>`
+const BoardContainer = styled('div')<ContainerProps>`
+  height: calc(100vh - 142px);
+  box-sizing: border-box;
   display: flex;
+  margin: 10px 0;
   background-color: ${(props) => (props.isDraggingOver ? '#639ee2' : 'inherit')};
 `;
 
@@ -23,7 +27,6 @@ const BeautifulBoard = () => {
   const { columns, loading, error } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
   const { fetchBoard } = useActions();
-  console.log(columns);
 
   useEffect(() => {
     fetchBoard(localStorage.getItem('idBoard')!);
@@ -112,29 +115,32 @@ const BeautifulBoard = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-column" type="column" direction="horizontal">
-        {(provided, snapshot) => (
-          <Container
-            isDraggingOver={snapshot.isDraggingOver}
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-          >
-            {columns.map((column, index) => {
-              return (
-                <BeautifulColumn
-                  index={index}
-                  key={column.id}
-                  column={column}
-                  tasks={column.tasks}
-                />
-              );
-            })}
-            {provided.placeholder}
-          </Container>
-        )}
-      </Droppable>
-    </DragDropContext>
+    <>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="all-column" type="column" direction="horizontal">
+          {(provided, snapshot) => (
+            <BoardContainer
+              isDraggingOver={snapshot.isDraggingOver}
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {columns.map((column, index) => {
+                return (
+                  <BeautifulColumn
+                    index={index}
+                    key={column.id}
+                    column={column}
+                    tasks={column.tasks}
+                  />
+                );
+              })}
+              {provided.placeholder}
+              <AddColumnButton />
+            </BoardContainer>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </>
   );
 };
 

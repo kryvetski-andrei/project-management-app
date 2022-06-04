@@ -13,14 +13,13 @@ interface columnPropsType {
   index: number;
 }
 
-const Container = styled('div')`
-  margin: 8px;
-  border-radius: 2px;
+const ColumnContainer = styled('div')`
+  border-radius: 5px;
+  margin: 0 5px;
   border: 1px solid lightgrey;
   display: flex;
   flex-direction: column;
-  width: 230px;
-  background: white;
+  width: 300px;
 `;
 const Title = styled('h3')`
   padding: 8px;
@@ -41,7 +40,7 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided) => (
-        <Container
+        <ColumnContainer
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -61,14 +60,10 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
               </TaskList>
             )}
           </Droppable>
-        </Container>
+        </ColumnContainer>
       )}
     </Draggable>
   );
 };
 
 export default BeautifulColumn;
-
-// export const BeautifulColumn: FunctionComponent<columnPropsType> = ({column, tasks, index,}) => {
-//   return <div className={classes.beautiful_column}>{column.title}</div>;
-// };

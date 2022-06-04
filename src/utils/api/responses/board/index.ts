@@ -21,10 +21,25 @@ const getColumn = async (boardId: string, columnId: string) => {
   const response = await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
+      Authorization: `Bearer ${token}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
+  });
+  return await response.json();
+};
+
+const postColumn = async (boardId: string, title: string) => {
+  const response = await fetch(`${BASE_URL}/boards/${boardId}/columns`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      title: title,
+    }),
   });
   return await response.json();
 };
@@ -80,6 +95,7 @@ const ApiService = {
   getColumn,
   updateTask,
   updateColumn,
+  postColumn,
 };
 
 export default ApiService;
