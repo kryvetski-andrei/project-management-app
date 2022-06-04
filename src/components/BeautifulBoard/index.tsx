@@ -8,6 +8,7 @@ import BeautifulColumn from './components/BeautifulColumn';
 import { useDispatch } from 'react-redux';
 import { BoardActionTypes } from '../../utils/types/Board';
 import update from 'immutability-helper';
+import ApiService from '../../utils/api/responses/board';
 
 interface ContainerProps {
   isDraggingOver: boolean;
@@ -22,6 +23,7 @@ const BeautifulBoard = () => {
   const { columns, loading, error } = useTypedSelector((state) => state.board);
   const dispatch = useDispatch();
   const { fetchBoard } = useActions();
+  console.log(columns);
 
   useEffect(() => {
     fetchBoard(localStorage.getItem('idBoard')!);
@@ -45,26 +47,30 @@ const BeautifulBoard = () => {
     const end = columns[columns.findIndex((column) => column.id === destination.droppableId)];
 
     if (type === 'column') {
-      const newColumns = [...columns];
-      newColumns.splice(source.index, 1);
-      newColumns.splice(
-        destination.index,
-        0,
-        columns[columns.findIndex((column) => column.id === draggableId)]
-      );
+      const column = columns[columns.findIndex((column) => column.id === draggableId)];
 
       dispatch({
         type: BoardActionTypes.UPDATE_COLUMNS,
-        payload: newColumns,
+        payload: update(columns, {
+          $splice: [
+            [source.index, 1],
+            [destination.index, 0, column],
+          ],
+        }),
       });
+
+      ApiService.updateColumn(column, column.id, destination.index);
 
       return;
     }
 
     if (start === end) {
       const columnIndex = columns.findIndex((column) => column.id === source.droppableId);
-      const columnN = columns[columns.findIndex((column) => column.id === source.droppableId)];
-      const tasksN = columnN.tasks;
+      const column = columns[columns.findIndex((column) => column.id === source.droppableId)];
+      const tasks = column.tasks;
+      const task = tasks[tasks.findIndex((task) => task.id === draggableId)];
+
+      ApiService.updateTask(task, column.id, destination.droppableId, destination.index);
 
       dispatch({
         type: BoardActionTypes.UPDATE_COLUMNS,
@@ -73,7 +79,7 @@ const BeautifulBoard = () => {
             tasks: {
               $splice: [
                 [source.index, 1],
-                [destination.index, 0, tasksN[tasksN.findIndex((task) => task.id === draggableId)]],
+                [destination.index, 0, task],
               ],
             },
           },
@@ -83,11 +89,14 @@ const BeautifulBoard = () => {
     }
 
     const sourceColumnIndex = columns.findIndex((column) => column.id === source.droppableId);
+    const sourceColumn = columns[sourceColumnIndex];
     const destinationColumnIndex = columns.findIndex(
       (column) => column.id === destination.droppableId
     );
     const sourceTaskList = columns[sourceColumnIndex].tasks;
     const draggedTask = sourceTaskList[sourceTaskList.findIndex((task) => task.id === draggableId)];
+
+    ApiService.updateTask(draggedTask, sourceColumn.id, destination.droppableId, destination.index);
 
     dispatch({
       type: BoardActionTypes.UPDATE_COLUMNS,

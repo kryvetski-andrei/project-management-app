@@ -15,7 +15,12 @@ export const fetchBoard = (boardId: string) => {
 
       dispatch({
         type: BoardActionTypes.FETCH_BOARD_SUCCESS,
-        payload: columns.sort((a, b) => a.order - b.order),
+        payload: columns
+          .sort((a, b) => a.order - b.order)
+          .map((column) => {
+            column.tasks.sort((a: { order: number }, b: { order: number }) => a.order - b.order);
+            return column;
+          }),
       });
     } catch (e) {
       dispatch({ type: BoardActionTypes.FETCH_BOARD_ERROR, payload: 'Can not download board' });
