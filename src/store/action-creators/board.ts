@@ -1,37 +1,18 @@
 import { BoardActionTypes, IBoardAction } from '../../utils/types/Board';
 import { Dispatch } from 'redux';
-import { BASE_URL, temporaryToken } from '../../utils/api/config';
 import { IColumn } from '../../utils/types/Column';
+import ApiService from '../../utils/api/responses/board';
 
 export const fetchBoard = (boardId: string) => {
   return async (dispatch: Dispatch<IBoardAction>) => {
     try {
       dispatch({ type: BoardActionTypes.FETCH_BOARD });
 
-      const response = await fetch(`${BASE_URL}/boards/${boardId}/columns`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-
+      const board = await ApiService.getBoard(boardId);
       const columns = await Promise.all(
-        data.map(async (column: IColumn) => {
-          const response = await fetch(`${BASE_URL}/boards/${boardId}/columns/${column.id}`, {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-            },
-          });
-          return await response.json();
-        })
+        board.map(async (column: IColumn) => ApiService.getColumn(boardId, column.id))
       );
+
       dispatch({
         type: BoardActionTypes.FETCH_BOARD_SUCCESS,
         payload: columns.sort((a, b) => a.order - b.order),
