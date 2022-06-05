@@ -24,10 +24,11 @@ const ColumnHeader = styled('div')`
 
 interface ContainerProps {
   isDragging: boolean;
+  randomBgGradient: string;
 }
 
 const ColumnContainer = styled('div')<ContainerProps>`
-  background-color: white;
+  background: linear-gradient(45deg, #fff1eb, #ace0f9);
   border-radius: 5px;
   margin: 0 5px;
   border: 1px solid lightgrey;
@@ -51,13 +52,33 @@ const TaskList = styled('div')<TaskListProps>`
   min-height: 100px;
   transition: background-color ease 0.2s;
   background-color: ${(props) => (props.isDraggingOver ? '#f0f4ff' : 'white')};
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fcfcfc;
+  }
+
+  &::-webkit-scrollbar {
+    width: 3px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+    background-color: #e8e8e8;
+  }
 `;
+
 const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, index }) => {
   const [editMode, setEditMode] = useState(false);
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided, snapshot) => (
         <ColumnContainer
+          randomBgGradient={Math.floor(Math.random() * 16777215).toString(16)}
           isDragging={snapshot.isDragging}
           ref={provided.innerRef}
           {...provided.draggableProps}
