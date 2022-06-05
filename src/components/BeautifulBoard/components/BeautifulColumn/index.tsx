@@ -22,13 +22,19 @@ const ColumnHeader = styled('div')`
   align-items: center;
 `;
 
-const ColumnContainer = styled('div')`
+interface ContainerProps {
+  isDragging: boolean;
+}
+
+const ColumnContainer = styled('div')<ContainerProps>`
+  background-color: white;
   border-radius: 5px;
   margin: 0 5px;
   border: 1px solid lightgrey;
   display: flex;
   flex-direction: column;
   min-width: 300px;
+  box-shadow: ${(props) => (props.isDragging ? 'rgba(0, 0, 0, 0.15) 0px 5px 15px' : 'none')};
 `;
 const Title = styled('h3')`
   padding: 8px;
@@ -50,8 +56,9 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
   const [editMode, setEditMode] = useState(false);
   return (
     <Draggable draggableId={column.id} index={index}>
-      {(provided) => (
+      {(provided, snapshot) => (
         <ColumnContainer
+          isDragging={snapshot.isDragging}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}

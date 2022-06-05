@@ -64,6 +64,7 @@ const TitleInput: FunctionComponent<TitleInputProps> = ({
         onChange={changeHandler}
         value={titleInputValue}
         sx={{ maxWidth: '145px' }}
+        autoComplete={'off'}
       />
       <LoadingButton
         color="secondary"
