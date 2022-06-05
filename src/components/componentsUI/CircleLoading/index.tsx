@@ -2,7 +2,7 @@ import { CircularProgress } from '@mui/material';
 
 const style = {
   display: 'flex',
-  height: '100vh',
+  height: 'calc(100vh - 122px)',
   justifyContent: 'center',
   alignItems: 'center',
 };

@@ -44,6 +44,15 @@ const postColumn = async (boardId: string, title: string) => {
   return await response.json();
 };
 
+const deleteColumn = async (boardId: string, columnId: string) => {
+  await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const updateTask = async (task: ITask, columnId: string, newColumnId: string, index: number) => {
   const order = index + 1;
   const response = await fetch(
@@ -96,6 +105,7 @@ const ApiService = {
   updateTask,
   updateColumn,
   postColumn,
+  deleteColumn,
 };
 
 export default ApiService;

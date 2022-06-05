@@ -10,6 +10,7 @@ import { BoardActionTypes } from '../../utils/types/Board';
 import update from 'immutability-helper';
 import ApiService from '../../utils/api/responses/board';
 import AddColumnButton from './components/BeautifulColumn/AddColumnButton';
+import HorizontalScroll from 'react-scroll-horizontal';
 
 interface ContainerProps {
   isDraggingOver: boolean;

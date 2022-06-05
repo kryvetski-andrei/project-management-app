@@ -6,12 +6,19 @@ import styled from '@emotion/styled';
 import Task from './components/BeautifulTask';
 import { IColumn } from '../../../../utils/types/Column';
 import { ITask } from '../../../../utils/types/Task';
+import ColumnMenu from './components/Menu';
 
 interface columnPropsType {
   column: IColumn;
   tasks: ITask[];
   index: number;
 }
+
+const ColumnHeader = styled('div')`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
 
 const ColumnContainer = styled('div')`
   border-radius: 5px;
@@ -46,7 +53,10 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
           {...provided.draggableProps}
           {...provided.dragHandleProps}
         >
-          <Title>{column.title}</Title>
+          <ColumnHeader>
+            <Title>{column.title}</Title>
+            <ColumnMenu columnId={column.id} />
+          </ColumnHeader>
           <Droppable droppableId={column.id} type="task">
             {(provided, snapshot) => (
               <TaskList
