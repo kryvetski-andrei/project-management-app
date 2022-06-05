@@ -53,6 +53,26 @@ const deleteColumn = async (boardId: string, columnId: string) => {
   });
 };
 
+const postTask = async (columnId: string, task: { title: string; description: string }) => {
+  const response = await fetch(
+    `${BASE_URL}/boards/${localStorage.getItem('idBoard')!}/columns/${columnId}/tasks`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: task.title,
+        description: task.description,
+        userId: getUserIdFromToken(token),
+      }),
+    }
+  );
+  return await response.json();
+};
+
 const updateTask = async (task: ITask, columnId: string, newColumnId: string, index: number) => {
   const order = index + 1;
   const response = await fetch(
@@ -78,7 +98,7 @@ const updateTask = async (task: ITask, columnId: string, newColumnId: string, in
   return await response.json();
 };
 
-const updateColumn = async (column: IColumn, columnId: string, index: number) => {
+const updateColumn = async (title: string, columnId: string, index: number) => {
   const order = index + 1;
   const response = await fetch(
     `${BASE_URL}/boards/${localStorage.getItem('idBoard')!}/columns/${columnId}`,
@@ -90,7 +110,7 @@ const updateColumn = async (column: IColumn, columnId: string, index: number) =>
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        title: column.title,
+        title: title,
         order: order,
       }),
     }
@@ -103,6 +123,7 @@ const ApiService = {
   getBoard,
   getColumn,
   updateTask,
+  postTask,
   updateColumn,
   postColumn,
   deleteColumn,

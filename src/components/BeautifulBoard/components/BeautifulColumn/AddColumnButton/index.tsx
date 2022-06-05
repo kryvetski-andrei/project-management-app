@@ -76,6 +76,7 @@ const AddColumnButton = () => {
             variant="outlined"
             value={value}
             onChange={changeHandler}
+            autoComplete={'off'}
           />
           <LoadingButton
             color="primary"

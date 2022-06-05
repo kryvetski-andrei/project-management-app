@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import classes from './index.module.scss';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import React from 'react';
@@ -7,6 +7,8 @@ import Task from './components/BeautifulTask';
 import { IColumn } from '../../../../utils/types/Column';
 import { ITask } from '../../../../utils/types/Task';
 import ColumnMenu from './components/Menu';
+import { TextField } from '@mui/material';
+import TitleInput from './components/TitleInput';
 
 interface columnPropsType {
   column: IColumn;
@@ -45,6 +47,7 @@ const TaskList = styled('div')<TaskListProps>`
   background-color: ${(props) => (props.isDraggingOver ? '#f0f4ff' : 'white')};
 `;
 const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, index }) => {
+  const [editMode, setEditMode] = useState(false);
   return (
     <Draggable draggableId={column.id} index={index}>
       {(provided) => (
@@ -54,8 +57,17 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
           {...provided.dragHandleProps}
         >
           <ColumnHeader>
-            <Title>{column.title}</Title>
-            <ColumnMenu columnId={column.id} />
+            {editMode ? (
+              <TitleInput
+                editMode={editMode}
+                setEditMode={setEditMode}
+                titleValue={column.title}
+                columnId={column.id}
+              />
+            ) : (
+              <Title>{column.title}</Title>
+            )}
+            <ColumnMenu columnId={column.id} setEditMode={setEditMode} editMode={editMode} />
           </ColumnHeader>
           <Droppable droppableId={column.id} type="task">
             {(provided, snapshot) => (

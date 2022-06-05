@@ -8,8 +8,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
-import ConformationModal from './components/confirmationModal';
+import ConformationModal from './components/ConfirmationModal';
 import { FunctionComponent, useState } from 'react';
+import CreationTaskModal from './components/CreationTaskModal';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -49,21 +50,38 @@ const StyledMenu = styled((props: MenuProps) => (
 
 interface IColumnMenuProps {
   columnId: string;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ColumnMenu: FunctionComponent<IColumnMenuProps> = ({ columnId }) => {
+const ColumnMenu: FunctionComponent<IColumnMenuProps> = ({ columnId, editMode, setEditMode }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [confirmationModal, setConfirmationModal] = useState<boolean>(false);
+  const [creationTaskModal, setCreationTaskModal] = useState<boolean>(false);
+
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
 
   const openConfirmationModal = () => {
     setConfirmationModal(true);
+    setAnchorEl(null);
+  };
+
+  const openTaskCreateModal = () => {
+    setCreationTaskModal(true);
+    setAnchorEl(null);
+  };
+
+  const turnOnEditMode = () => {
+    setEditMode(true);
+    setAnchorEl(null);
   };
 
   return (
@@ -80,12 +98,12 @@ const ColumnMenu: FunctionComponent<IColumnMenuProps> = ({ columnId }) => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={turnOnEditMode} disableRipple>
           <EditIcon />
           Edit Column
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={openTaskCreateModal} disableRipple>
           <AddIcon />
           Add Task
         </MenuItem>
@@ -94,8 +112,17 @@ const ColumnMenu: FunctionComponent<IColumnMenuProps> = ({ columnId }) => {
           <DeleteOutlineIcon color="error" />
           Delete Column
         </MenuItem>
-        <ConformationModal isModalOpen={confirmationModal} columnId={columnId} />
       </StyledMenu>
+      <ConformationModal
+        setConfirmationModal={setConfirmationModal}
+        confirmationModal={confirmationModal}
+        columnId={columnId}
+      />
+      <CreationTaskModal
+        setCreationTaskModal={setCreationTaskModal}
+        creationTaskModal={creationTaskModal}
+        columnId={columnId}
+      />
     </div>
   );
 };

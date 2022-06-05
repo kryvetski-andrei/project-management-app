@@ -85,7 +85,7 @@ const BeautifulBoard = () => {
         }),
       });
 
-      ApiService.updateColumn(column, column.id, destination.index);
+      ApiService.updateColumn(column.title, column.id, destination.index);
 
       return;
     }

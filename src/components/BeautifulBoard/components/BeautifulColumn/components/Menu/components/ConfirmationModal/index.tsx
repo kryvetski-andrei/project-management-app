@@ -16,23 +16,23 @@ import update from 'immutability-helper';
 import { findColumnById } from '../../../../../../../Board/utils/findColumnById';
 
 interface Modal {
-  isModalOpen: boolean;
+  setConfirmationModal: React.Dispatch<React.SetStateAction<boolean>>;
+  confirmationModal: boolean;
   columnId: string;
 }
 
-const ConfirmationModal: FunctionComponent<Modal> = ({ isModalOpen, columnId }) => {
+const ConfirmationModal: FunctionComponent<Modal> = ({
+  setConfirmationModal,
+  confirmationModal,
+  columnId,
+}) => {
   const dispatch = useDispatch();
   const { columns } = useTypedSelector((state) => state.board);
 
-  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setOpen(isModalOpen);
-  }, [isModalOpen]);
-
   const handleClose = () => {
-    setOpen(false);
+    setConfirmationModal(false);
   };
 
   const handleDelete = async () => {
@@ -54,7 +54,7 @@ const ConfirmationModal: FunctionComponent<Modal> = ({ isModalOpen, columnId }) 
   return (
     <div>
       <Dialog
-        open={open}
+        open={confirmationModal}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
