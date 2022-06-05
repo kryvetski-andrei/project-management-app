@@ -16,11 +16,33 @@ interface ContainerProps {
 }
 
 const BoardContainer = styled('div')<ContainerProps>`
-  height: calc(100vh - 142px);
+  height: calc(100vh - 127px);
+  width: 100%;
+  overflow-x: scroll;
   box-sizing: border-box;
   display: flex;
-  margin: 10px 0;
-  background-color: ${(props) => (props.isDraggingOver ? '#639ee2' : 'inherit')};
+  padding: 10px 0;
+  margin-bottom: 5px;
+  transition: 0.3s ease;
+  background-color: ${(props) => (props.isDraggingOver ? '#f0f4ff' : 'inherit')};
+
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar {
+    height: 8px;
+    width: 12px;
+    background-color: #f5f5f5;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
+  }
 `;
 
 const BeautifulBoard = () => {

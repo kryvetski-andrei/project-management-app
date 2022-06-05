@@ -57,7 +57,7 @@ const AddColumnButton = () => {
 
   return (
     <>
-      <Button onClick={handleOpen} sx={{ width: '300px' }}>
+      <Button onClick={handleOpen} sx={{ minWidth: '300px', margin: '0 5px' }}>
         <AddIcon />
         Add Column
       </Button>
@@ -84,6 +84,7 @@ const AddColumnButton = () => {
             loadingPosition="start"
             startIcon={<AddIcon />}
             variant="contained"
+            disabled={value === ''}
           >
             Add Column
           </LoadingButton>

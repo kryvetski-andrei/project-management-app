@@ -1,11 +1,10 @@
 import React from 'react';
-import Board from '../../components/Board';
-import './index.module.scss';
+import classes from './index.module.scss';
 import BeautifulBoard from '../../components/BeautifulBoard';
 
 const BoardPage = () => {
   return (
-    <div className="board-page">
+    <div className={classes.boardPage}>
       <BeautifulBoard />
       {/*<Board />*/}
     </div>

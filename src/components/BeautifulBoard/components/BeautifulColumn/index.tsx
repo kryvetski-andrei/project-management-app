@@ -19,7 +19,7 @@ const ColumnContainer = styled('div')`
   border: 1px solid lightgrey;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  min-width: 300px;
 `;
 const Title = styled('h3')`
   padding: 8px;
@@ -30,11 +30,12 @@ interface TaskListProps {
 }
 
 const TaskList = styled('div')<TaskListProps>`
-  padding: 8px;
+  padding: 5px;
   flex-grow: 1;
+  width: 100%;
   min-height: 100px;
   transition: background-color ease 0.2s;
-  background-color: ${(props) => (props.isDraggingOver ? 'palevioletred' : 'white')};
+  background-color: ${(props) => (props.isDraggingOver ? '#f0f4ff' : 'white')};
 `;
 const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, index }) => {
   return (
