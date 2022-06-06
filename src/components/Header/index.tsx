@@ -71,7 +71,7 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
           }}
         >
           <NavLink to="/welcome" className={styles['header__logo']}>
-            PWA
+            Kanban
           </NavLink>
           <Box
             sx={{
@@ -121,15 +121,6 @@ function Header(props: { dark?: number; onCreateBoard?: () => void }): ReactElem
             )}
           </Box>
         </Box>
-        {location.pathname === pagesPath.mainPagePath ? (
-          <BoardTools
-            btnClass={styles['header__btn']}
-            dark={props.dark === 1}
-            onCreateBoard={handleClik}
-          />
-        ) : (
-          ''
-        )}
         {activeModal === 'create' && <CreateBoard />}
       </Container>
     </AppBar>
