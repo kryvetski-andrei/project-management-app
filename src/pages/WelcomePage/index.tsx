@@ -13,23 +13,15 @@ const WelcomePage = (): ReactElement => {
   return (
     <Container maxWidth="md" sx={{ padding: '2rem 0', minHeight: 'calc(100vh - 122px)' }}>
       <div className={styles['project-info']}>
-        <Typography
-          variant="h3"
-          align="center"
-          sx={{ fontFamily: 'Pavanam', marginBottom: '1.75rem' }}
-        >
+        <Typography variant="h3" align="center" sx={{ marginBottom: '1.75rem' }}>
           {phrases.pma}
         </Typography>
-        <Typography align="center" sx={{ fontFamily: 'Pavanam', fontSize: '.875rem' }}>
+        <Typography align="center" sx={{ fontSize: '.875rem' }}>
           {phrases.pmaDesc}
         </Typography>
       </div>
       <div>
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{ fontFamily: 'Pavanam', marginBottom: '1.688rem' }}
-        >
+        <Typography variant="h4" align="center" sx={{ marginBottom: '1.688rem' }}>
           {phrases.developers}
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>

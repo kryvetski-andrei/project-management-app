@@ -21,14 +21,13 @@ function DeveloperCard(props: IDeveloperCardProps): ReactElement {
           align="center"
           sx={{
             fontSize: '1.25rem',
-            fontFamily: 'Poppins',
             fontWeight: 'bold',
             marginBottom: '.813rem',
           }}
         >
           {props.name}
         </Typography>
-        <Typography align="center" sx={{ fontSize: '.875rem', fontFamily: 'Pavanam' }}>
+        <Typography align="center" sx={{ fontSize: '.875rem' }}>
           {props.description}
         </Typography>
       </CardContent>

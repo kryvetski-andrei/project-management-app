@@ -32,7 +32,7 @@ const ruLanguage: ILanguage = {
       },
       {
         name: 'Андрей',
-        desc: 'Был ответсвенный за доски и размещение сервера в сети интернет, работа с клиентом',
+        desc: 'Был ответсвенный за канбан и размещение сервера в сети интернет, работа с клиентом',
       },
     ],
     developers: 'Разработчики',
@@ -88,7 +88,7 @@ const engLanguage: ILanguage = {
       },
       {
         name: 'Andrew',
-        desc: 'Was responsible for the boards and server placement on the Internet, work with the client',
+        desc: 'Was responsible for the kanban and server placement in the Internet',
       },
     ],
     developers: 'Developers',
