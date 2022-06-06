@@ -9,7 +9,7 @@ const getBoard = async (boardId: string) => {
   const response = await fetch(`${BASE_URL}/boards/${boardId}/columns`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem('token')!}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
@@ -21,7 +21,7 @@ const getColumn = async (boardId: string, columnId: string) => {
   const response = await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem('token')!}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
@@ -33,7 +33,7 @@ const postColumn = async (boardId: string, title: string) => {
   const response = await fetch(`${BASE_URL}/boards/${boardId}/columns`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem('token')!}`,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
@@ -48,7 +48,7 @@ const deleteColumn = async (boardId: string, columnId: string) => {
   await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem('token')!}`,
     },
   });
 };
@@ -57,7 +57,7 @@ const deleteTask = async (boardId: string, columnId: string, taskId: string) => 
   await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
     method: 'DELETE',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${localStorage.getItem('token')!}`,
     },
   });
 };
@@ -68,14 +68,14 @@ const postTask = async (columnId: string, task: { title: string; description: st
     {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('token')!}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         title: task.title,
         description: task.description,
-        userId: getUserIdFromToken(token),
+        userId: getUserIdFromToken(localStorage.getItem('token')!),
       }),
     }
   );
@@ -89,7 +89,7 @@ const updateTask = async (task: ITask, columnId: string, newColumnId: string, in
     {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('token')!}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
@@ -97,7 +97,7 @@ const updateTask = async (task: ITask, columnId: string, newColumnId: string, in
         title: task.title,
         order: order,
         description: task.description,
-        userId: getUserIdFromToken(token),
+        userId: getUserIdFromToken(localStorage.getItem('token')!),
         boardId: localStorage.getItem('idBoard')!,
         columnId: newColumnId,
       }),
@@ -114,7 +114,7 @@ const updateColumn = async (title: string, columnId: string, index: number) => {
     {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${localStorage.getItem('token')!}`,
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
