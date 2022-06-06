@@ -13,7 +13,7 @@ import { FC } from 'react';
 import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import update from 'immutability-helper';
-import { findColumnById } from '../../../../utils/findColumnById';
+import { findColumnById } from '../../../../../BeautifulBoard/utils/findColumnById';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';

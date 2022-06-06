@@ -5,13 +5,15 @@ import { ITask } from '../../../../../../utils/types/Task';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { CardActionArea } from '@mui/material';
+import { Box, CardActionArea } from '@mui/material';
+import TaskMenu from './components/TaskMenu';
 
 interface ContainerProps {
   isDragging: boolean;
 }
 
 interface TaskType {
+  columnId: string;
   task: ITask;
   index: number;
 }
@@ -25,7 +27,7 @@ const Container = styled('div')<ContainerProps>`
   background: white;
 `;
 
-const Task = ({ task, index }: TaskType) => {
+const Task = ({ columnId, task, index }: TaskType) => {
   return (
     <Draggable draggableId={task.id} index={index}>
       {(provided, snapshot) => (
@@ -35,9 +37,12 @@ const Task = ({ task, index }: TaskType) => {
           {...provided.draggableProps}
           isDragging={snapshot.isDragging}
         >
-          <Typography gutterBottom variant="h6" component="div">
-            {task.title}
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography gutterBottom variant="h6" component="div">
+              {task.title}
+            </Typography>
+            <TaskMenu taskId={task.id} columnId={columnId} />
+          </Box>
           <Typography variant="body2" color="text.secondary">
             {task.description}
           </Typography>

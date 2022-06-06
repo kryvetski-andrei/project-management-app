@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import ApiService from '../../../../../../utils/api/responses/board';
-import { findColumnById } from '../../../../../Board/utils/findColumnById';
+import { findColumnById } from '../../../../utils/findColumnById';
 import { useTypedSelector } from '../../../../../../hooks/useTypeSelector';
 import { useDispatch } from 'react-redux';
 import { BoardActionTypes } from '../../../../../../utils/types/Board';

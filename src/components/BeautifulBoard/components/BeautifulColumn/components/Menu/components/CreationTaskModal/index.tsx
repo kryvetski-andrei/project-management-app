@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { useTypedSelector } from '../../../../../../../../hooks/useTypeSelector';
 import { BoardActionTypes } from '../../../../../../../../utils/types/Board';
 import update from 'immutability-helper';
-import { findColumnById } from '../../../../../../../Board/utils/findColumnById';
+import { findColumnById } from '../../../../../../utils/findColumnById';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { TextField } from '@mui/material';
 

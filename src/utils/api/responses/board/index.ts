@@ -53,6 +53,15 @@ const deleteColumn = async (boardId: string, columnId: string) => {
   });
 };
 
+const deleteTask = async (boardId: string, columnId: string, taskId: string) => {
+  await fetch(`${BASE_URL}/boards/${boardId}/columns/${columnId}/tasks/${taskId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
 const postTask = async (columnId: string, task: { title: string; description: string }) => {
   const response = await fetch(
     `${BASE_URL}/boards/${localStorage.getItem('idBoard')!}/columns/${columnId}/tasks`,
@@ -127,6 +136,7 @@ const ApiService = {
   updateColumn,
   postColumn,
   deleteColumn,
+  deleteTask,
 };
 
 export default ApiService;

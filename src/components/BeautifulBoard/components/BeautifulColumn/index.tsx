@@ -105,7 +105,7 @@ const BeautifulColumn: FunctionComponent<columnPropsType> = ({ tasks, column, in
                 {...provided.droppableProps}
               >
                 {tasks.map((task, index) => (
-                  <Task key={task.id} task={task} index={index} />
+                  <Task key={task.id} columnId={column.id} task={task} index={index} />
                 ))}
                 {provided.placeholder}
               </TaskList>
